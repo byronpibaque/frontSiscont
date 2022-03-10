@@ -22,6 +22,8 @@ import secuenciales from './components/secuenciales.vue'
 import perchas from './components/perchas.vue'
 import consultaretenciones from './components/consultaretenciones.vue'
 import consultacuentasporpagar from './components/consultacuentasporpagar.vue'
+import egresos from './components/egresos.vue'
+
 Vue.use(Router)
 
 var router = new Router({
@@ -32,6 +34,20 @@ var router = new Router({
       path: '/',
       name: 'home',
       component: Home,
+      meta:{
+        contabilidad:true,
+        administrador:true,
+        guardaalmacen:true,
+        compraspublica:true,
+        supervisor:true,
+        gerente:true,
+        facturacion:true
+      }
+    },
+    {
+      path: '/egresos',
+      name: 'egresos',
+      component: egresos,
       meta:{
         contabilidad:true,
         administrador:true,

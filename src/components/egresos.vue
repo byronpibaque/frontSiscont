@@ -2,7 +2,7 @@
   <v-layout align-start>
     <v-flex>
       <v-toolbar flat color="white">
-        <v-toolbar-title>Compras</v-toolbar-title>
+        <v-toolbar-title>Egresos</v-toolbar-title>
         <v-divider class="mx-2" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-text-field
@@ -27,10 +27,8 @@
               <v-text-field
                 v-model="numComprobante"
                 label="Número Comprobante"
+                readonly
               ></v-text-field>
-            </v-flex>
-            <v-flex xs12 sm5 md5 lg5 xl5>
-              <v-text-field v-model="claveAcceso" label="Clave de acceso"></v-text-field>
             </v-flex>
          
              <v-flex xs12 sm3 md3>
@@ -68,31 +66,35 @@
                 label="Descripcion de la compra"
               ></v-textarea>
             </v-flex>
+             <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
+            <span>Datos de cliente</span>
+             <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
             <v-flex xs12 sm3 md3 lg3 xl3>
               <v-text-field
-                v-model="ruc_proveedor"
-                label="Ruc Proveedor"
-                @keyup.enter="buscarProveedor(ruc_proveedor)"
+                v-model="doc_cliente"
+                label="Num documento"
+                @keyup.enter="buscarCliente(doc_cliente)"
               ></v-text-field>
             </v-flex>
 
             <v-flex xs12 sm3 md3 lg3 xl3>
               <v-text-field
-                v-model="razonSocial_Proveedor"
-                label="Razon Social"
+                v-model="nombres_Cliente"
+                label="Nombres"
                 disabled
               ></v-text-field>
             </v-flex>
             <v-flex xs12 sm3 md3 lg3 xl3>
               <v-text-field
-                v-model="direccion_Proveedor"
+                v-model="direccion_Cliente"
                 label="Direccion"
                 disabled
               ></v-text-field>
             </v-flex>
-
+           
             <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
-
+            <span>Datos de productos</span>
+             <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
             <v-flex xs12 sm8 md8 lg8 x8>
               <v-text-field
                 v-model="codigo"
@@ -134,41 +136,19 @@
                     <td class="text-xs-center">
                       <v-text-field v-model="props.item.fracciones"></v-text-field>
                     </td>
-                    <td class="text-xs-center">
-                      <v-text-field v-model="props.item.bonificacion"></v-text-field>
-                    </td>
+           
                     <td class="text-xs-center green--text">
                       {{ props.item.fxcaja }}
                     </td>
                     <td class="text-xs-center green--text">
                       {{
                         (props.item.fraccionesTotales =
-                          (parseInt(props.item.cantidad) +
-                            parseInt(props.item.bonificacion)) *
+                          parseInt(props.item.cantidad) *
                             parseInt(props.item.fxcaja) +
                           parseInt(props.item.fracciones))
                       }}
                     </td>
-                    <td class="text-xs-center green--text">
-                      $
-                      {{
-                        (props.item.costoNeto = (
-                          ((props.item.cantidad *
-                            props.item.fxcaja *
-                            (props.item.pvm / props.item.fxcaja) -
-                            (props.item.cantidad *
-                              props.item.fxcaja *
-                              (props.item.pvm / props.item.fxcaja) *
-                              props.item.descuento) /
-                              100) /
-                            props.item.fraccionesTotales) *
-                          props.item.fxcaja
-                        ).toFixed(2))
-                      }}
-                    </td>
-                    <td class="text-xs-center green--text">
-                      <v-text-field prefix="$" v-model="props.item.pvm"></v-text-field>
-                    </td>
+              
                     <td class="text-xs-center green--text">
                       <v-text-field prefix="$" v-model="props.item.pvp"></v-text-field>
                     </td>
@@ -192,8 +172,7 @@
                     <td class="text-xs-center green--text">
                       ${{
                         (
-                          ((parseInt(props.item.cantidad) +
-                            parseInt(props.item.bonificacion)) *
+                          (parseInt(props.item.cantidad) *
                             parseInt(props.item.fxcaja) +
                             parseInt(props.item.fracciones)) *
                           parseFloat(props.item.punit)
@@ -205,7 +184,9 @@
                     <h3>No hay artículos agregados al detalle.</h3>
                   </template>
                 </v-data-table>
-                <span>Forma de pago</span>
+                <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
+            <span>Forma de pago</span>
+             <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
                 <v-flex xs12 sm4 md4 lg4 xl4>
                   <v-btn
                     color="white"
@@ -565,7 +546,7 @@ export default {
       ],
       compras: [],
       claveAcceso: "",
-      _idProveedor: "",
+      _idCliente: "",
       texto: "",
       articulos: [],
       cabeceraArticulos: [
@@ -590,11 +571,10 @@ export default {
         { text: "Producto", value: "producto", sortable: false },
         { text: "Cantidad", value: "cantidad", sortable: false },
         { text: "Fracciones", value: "fracciones", sortable: false },
-        { text: "Bonificacion", value: "bonificacion", sortable: false },
+       
         { text: "F * Caja", value: "fxcaja", sortable: false },
         { text: "F Totales", value: "fraccionesTotales", sortable: false },
-        { text: "Costo Neto", value: "costoNeto", sortable: false },
-        { text: "PVM", value: "pvM", sortable: false },
+     
         { text: "PVP", value: "pvP", sortable: false },
         { text: "P. UNIT.", value: "punit", sortable: false },
         { text: "IVA?", value: "iva", sortable: false },
@@ -607,18 +587,34 @@ export default {
       numComprobante: "",
       fechaFactura: "",
       descripcion: "",
-      direccion_Proveedor: "",
-      razonSocial_Proveedor: "",
-      ruc_proveedor: "",
+      direccion_Cliente: "",
+      nombres_Cliente: "",
+      doc_cliente: "",
       codigoBodega: "",
       adModal: 0,
       adAccion: 0,
       adNombre: "",
       adId: "",
+      
     };
   },
   props: {},
+
   methods: {
+    ObtenerConteo(){
+      let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
+       let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
+      axios
+        .get("egresos/obtenerconteo?codigoDistribuidor=" + codigoDistribuidor, configuracion)
+        .then(function (response) {
+         me.numComprobante=response.data
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     Agregarformapago() {
       let me = this;
       me.detallesFP.unshift({
@@ -648,9 +644,9 @@ export default {
       this.verNuevo = 1;
       this.numComprobante = data.numComprobante;
       this.descripcion = data.descripcion;
-      this.ruc_proveedor = data.codigoProveedor.ruc;
-      this.razonSocial_Proveedor = data.codigoProveedor.razonsocial;
-      this.direccion_Proveedor = data.codigoProveedor.direccion;
+      this.doc_cliente = data.codigoProveedor.ruc;
+      this.nombres_Cliente = data.codigoProveedor.razonsocial;
+      this.direccion_Cliente = data.codigoProveedor.direccion;
       this.fechaFactura = this.formatearFecha(data.fechaFactura);
 
       this.listarDetalles(data._id);
@@ -690,9 +686,9 @@ export default {
     limpiar() {
       this.detallesFP = [];
       this.claveAcceso = "";
-      this.direccion_Proveedor = "";
-      this.razonSocial_Proveedor = "";
-      this.ruc_proveedor = "";
+      this.direccion_Cliente = "";
+      this.nombres_Cliente = "";
+      this.doc_cliente = "";
       this.numComprobante = "";
       this.fechaFactura = "";
       this.descripcion = "";
@@ -701,7 +697,7 @@ export default {
       this.totalimpuesto = 0;
       this.totaldescuento = 0;
       this.subtotal = 0;
-      this._idProveedor = "";
+      this._idCliente = "";
       this.detalles = [];
       this.valida = 0;
       this.validaMensaje = [];
@@ -770,13 +766,13 @@ export default {
       if (this.descripcion.length == 0) {
         this.validaMensaje.push("Debe ingresar la descripcion de la compra");
       }
-      if (this.ruc_proveedor.length == 0) {
+      if (this.doc_cliente.length == 0) {
         this.validaMensaje.push("Debe ingresar el numero de RUC del proveedor.");
       }
-      if (this.razonSocial_Proveedor.length == 0) {
+      if (this.nombres_Cliente.length == 0) {
         this.validaMensaje.push("Falta razon social del proveedor.");
       }
-      if (this.direccion_Proveedor.length == 0) {
+      if (this.direccion_Cliente.length == 0) {
         this.validaMensaje.push("Falta direccion de proveedor.");
       }
 
@@ -875,7 +871,7 @@ export default {
             detalles: this.detalles,
             formaPago: this.detallesFP,
             descripcion: this.descripcion,
-            codigoProveedor: this._idProveedor,
+            codigoProveedor: this._idCliente,
             codigoBodega: this.codigoBodega,
             codigoDistribuidor: codigoDistribuidor,
             codigoUsuario: codigoUsuario,
@@ -891,7 +887,7 @@ export default {
                   element.unidadTiempo,
                   element.plazo,
                   response.data._id,
-                  me._idProveedor,
+                  me._idCliente,
                   codigoDistribuidor,
                   codigoUsuario,
                   me.total,
@@ -998,12 +994,12 @@ export default {
           producto: data.nombreComercial,
           cantidad: 0,
           fracciones: 0,
-          bonificacion: 0,
+     
           fxcaja: data.codigoProducto.fraccionCaja,
           fraccionesTotales: data.fraccionesTotales,
-          costoNeto: 0,
+         
           pvp: data.pvp,
-          pvm: data.pvm,
+         
           punit: data.punit,
           descuento: data.descuento,
           iva: data.iva,
@@ -1043,7 +1039,7 @@ export default {
           console.log(error);
         });
     },
-    buscarProveedor(data) {
+    buscarCliente(data) {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
@@ -1051,14 +1047,17 @@ export default {
       let codigoUsuario = this.$store.state.usuario._id;
 
       axios
-        .get("proveedor/consulta?data=" + data, configuracion)
+        .get("cliente/consulta?data=" + data, configuracion)
         .then(function (response) {
           if (response.status == 206) {
             Swal.fire("Error", response.data.message, "error");
+               me.direccion_Cliente = ""
+            me.nombres_Cliente = ""
+            me._idCliente = ""
           } else {
-            me.direccion_Proveedor = response.data.direccion;
-            me.razonSocial_Proveedor = response.data.razonsocial;
-            me._idProveedor = response.data._id;
+            me.direccion_Cliente = response.data.direccion;
+            me.nombres_Cliente = response.data.nombres;
+            me._idCliente = response.data._id;
           }
         })
         .catch(function (error) {
@@ -1118,6 +1117,7 @@ export default {
   created() {
     this.listar();
     this.obtenerBodega();
+    this.ObtenerConteo()
   },
 };
 </script>

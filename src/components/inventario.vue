@@ -599,6 +599,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+      <!--MODAL INVENTARIO-->
       <v-dialog v-model="modalInventario" max-width="950">
         <v-card>
           <v-card-title class="headline">
@@ -682,10 +683,16 @@
                 </v-flex>
 
                 <v-flex xs12 sm12 md12> </v-flex>
-                <v-flex xs7 sm7 md7>
+                <v-flex xs6 sm6 md6>
                   <v-text-field
                     v-model="nombreComercial"
                     label="Nombre Comercial"
+                  ></v-text-field>
+                </v-flex>
+                 <v-flex xs5 sm5 md5>
+                  <v-text-field
+                    v-model="registroSanitario"
+                    label="Registro Sanitario"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm12 md12> </v-flex>
@@ -777,35 +784,41 @@
               >edit</v-icon
             >
           </td>
-          <td class="text-xs-center blue--text">
+          <td class="grey lighten-1 text-xs-center black--text">
             {{ props.item.codigoProducto.descripcion }}
           </td>
-          <td class="text-xs-center blue--text">
+          <td class="grey text-xs-center black--text">
             {{ props.item.nombreComercial }}
           </td>
-          <td class="text-xs-center blue--text">
+          <td class="grey darken-1 text-xs-center white--text">
             {{ props.item.codigoBarra }}
           </td>
-          <td class="orange">
+          <td class="grey darken-2 text-xs-center white--text">
             {{ props.item.codigoLote }}
           </td>
-          <td>
+          <td  class="grey darken-2 text-xs-center white--text" v-if="props.item.registroSanitario">{{props.item.registroSanitario}}</td>
+          <td v-else class="red--text">No se registra el campo REGISTRO SANITARIO</td>
+          <td class="deep-orange lighten-2">
             {{ props.item.fraccionesTotales }}
           </td>
-          <td>
+          <td class="deep-orange lighten-3">
             {{ props.item.codigoProducto.fraccionCaja }}
           </td>
-          <td class="green--text">${{ props.item.pvm }}</td>
-          <td>
+          <td class="blue--text">${{ props.item.costoNeto }}</td>
+          <td class="blue--text">${{ props.item.pvm }}</td>
+          <td class="blue--text">${{ props.item.pvp }}</td>
+          <td class="blue--text">${{ props.item.punit }}</td>
+
+          <td class="deep-purple lighten-4">
             {{ props.item.percha }}
           </td>
-          <td>
+          <td class="blue lighten-5">
             {{ props.item.numComprobante }}
           </td>
-          <td>
+          <td class="teal lighten-1">
             {{ props.item.codigoFabricante.razonsocial }}
           </td>
-          <td>
+          <td class="teal lighten-2">
             {{ props.item.codigoProveedor.razonsocial }}
           </td>
         </template>
@@ -897,6 +910,7 @@ export default {
         { text: "Nombre Comercial", value: "nombreComercial", sortable: true },
         { text: "Codigo Barra", value: "codigoBarra", sortable: false },
         { text: "Codigo Lote", value: "codigoLote", sortable: false },
+           { text: "Registro Sanitario", value: "registroSanitario", sortable: false },
         { text: "Fracciones T.", value: "fraccionesTotales", sortable: false },
         {
           text: "Fracciones * C.",
@@ -904,8 +918,23 @@ export default {
           sortable: false,
         },
         {
+          text: "C. NETO",
+          value: "costoNeto",
+          sortable: false,
+        },
+        {
           text: "PVM",
           value: "pvm",
+          sortable: false,
+        },
+        {
+          text: "PVP",
+          value: "pvp",
+          sortable: false,
+        },
+        {
+          text: "P. Unit",
+          value: "punit",
           sortable: false,
         },
         { text: "Ubicacion en percha", value: "percha", sortable: false },
@@ -917,6 +946,7 @@ export default {
       codigoBarra: "",
       codigoLote: "",
       nombreComercial: "",
+      registroSanitario:"",
       fraccionesTotales: 0,
       fechaCaducidad: "",
       fechaElaboracion: "",
@@ -1035,6 +1065,7 @@ export default {
       this.codigoBarra = item.codigoBarra;
       this.codigoLote = item.codigoLote;
       this.nombreComercial = item.nombreComercial;
+      this.registroSanitario=item.registroSanitario;
       this.fraccionesTotales = item.fraccionesTotales;
       this.fechaCaducidad = item.fechaCaducidad;
       this.iva = item.iva;
@@ -1086,6 +1117,7 @@ export default {
       this.codigoBarra = "";
       this.codigoLote = "";
       this.nombreComercial = "";
+      this.registroSanitario="";
       this.fraccionesTotales = 0;
       this.fechaCaducidad = "";
       this.iva = 0;
@@ -1145,6 +1177,9 @@ export default {
       if (this.nombreComercial.length == 0) {
         this.validaMensaje.push("Debe ingresar el nombre comercial.");
       }
+      if(this.registroSanitario.length==0){
+        this.validaMensaje.push("Debe ingresar el registro sanitario del producto.");
+      }
       if (this.iva.length == 0) {
         this.validaMensaje.push("Debe escoger si el producto graba o no IVA.");
       }
@@ -1176,6 +1211,7 @@ export default {
       respuesta
         .then((result) => {
           let nombre = this.nombreComercial;
+          let rsani=this.registroSanitario;
           let codi = this.codigoLote;
           if (this.banderaActualizar) {
             axios
@@ -1186,6 +1222,7 @@ export default {
                   codigoBarra: this.codigoBarra,
                   codigoLote: codi.toUpperCase(),
                   nombreComercial: nombre.toUpperCase(),
+                  registroSanitario:rsani.toUpperCase(),
                   fraccionesTotales: this.fraccionesTotales,
                   fechaCaducidad: this.fechaCaducidad,
                   fechaElaboracion: this.fechaElaboracion,
@@ -1233,6 +1270,7 @@ export default {
                   codigoBarra: this.codigoBarra,
                   codigoLote: codi.toUpperCase(),
                   nombreComercial: nombre.toUpperCase(),
+                  registroSanitario:rsani.toUpperCase(),
                   fraccionesTotales: this.fraccionesTotales,
                   fechaCaducidad: this.fechaCaducidad,
                   fechaElaboracion: this.fechaElaboracion,
@@ -1302,12 +1340,12 @@ export default {
         .then(function (response) {
           ArrayT = response.data;
           ArrayT.map(function (x) {
-            me.productos.push({
+          me.productos.push({
               text:
                 x.descripcion +
                 " " +
                 x.detalleConcentracion +
-                x.codigoConcentracion.descripcion,
+                x.codigoConcentracion.descripcion+" C*:"+x.fraccionCaja,
               value: x._id,
             });
           });

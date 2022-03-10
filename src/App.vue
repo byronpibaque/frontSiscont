@@ -34,6 +34,14 @@
                 <v-list-tile-title>Compras</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
+                <v-list-tile class="red--text" :to="{ name: 'egresos' }">
+              <v-list-tile-action>
+                <v-icon>view_in_ar</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>Egresos</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
             <v-list-tile class="orange--text" :to="{ name: 'cuarentena' }">
               <v-list-tile-action>
                 <v-icon>dashboard</v-icon>

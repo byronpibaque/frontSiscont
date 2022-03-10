@@ -244,7 +244,7 @@ export default {
       tipoIdentificacion: "",
       direccion_comprador: "",
       telefono_comprador: "NN",
-      email_comprador: "tuahorrocomprobantes@gmail.com",
+      email_comprador: "",
       razonsocial_comprador: "CONSUMIDOR FINAL",
       ruc_comprador: "9999999999999",
       //datos para la emision
