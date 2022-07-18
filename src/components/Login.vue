@@ -40,58 +40,52 @@
           </v-card>
         </v-flex>
       </div> -->
-   
+
       <div id="login">
-        
-          <div id="cajas">
-        
-           
-            
-            <v-flex>
-               <v-text-field
-                prepend-icon="account_circle"
-                autofocus
-                color="accent"
-                v-model="email"
-                label="Usuario"
-                required
-              >
-              </v-text-field>
+        <div id="cajas">
+          <v-flex>
+            <v-text-field
+              prepend-icon="account_circle"
+              autofocus
+              color="accent"
+              v-model="email"
+              label="Usuario"
+              required
+            >
+            </v-text-field>
+          </v-flex>
+          <v-flex>
+            <v-text-field
+              prepend-icon="generating_tokens"
+              autofocus
+              color="accent"
+              v-model="codigoDistribuidor"
+              label="Token de acceso"
+              required
+            >
+            </v-text-field>
+          </v-flex>
+          <v-flex>
+            <v-text-field
+              prepend-icon="lock"
+              type="password"
+              color="accent"
+              v-model="password"
+              label="Contraseña"
+              v-on:keyup.enter="ingresar"
+              required
+            >
+            </v-text-field>
+          </v-flex>
+          <v-flex xs12 sm12 md12 lg12 xl12 v-show="errorM">
+            <div class="red--text" v-text="errorM"></div>
+          </v-flex>
+          <v-flex>
+            <v-flex text-xs-center>
+              <v-btn class="boton" @click="ingresar()">INICIAR</v-btn>
             </v-flex>
-              <v-flex>
-               <v-text-field
-                prepend-icon="generating_tokens"
-                autofocus
-                color="accent"
-                v-model="codigoDistribuidor"
-                label="Token de acceso"
-                required
-              >
-              </v-text-field>
-            </v-flex>
-            <v-flex>
-                <v-text-field
-                prepend-icon="lock"
-                  type="password"
-                  color="accent"
-                  v-model="password"
-                  label="Contraseña"
-                  v-on:keyup.enter="ingresar"
-                  required
-                >
-                </v-text-field>
-            </v-flex>
-            <v-flex>
-               <v-flex text-xs-center>
-                <v-btn 
-                class="boton"
-                @click="ingresar" >INICIAR</v-btn>
-              </v-flex>
-            </v-flex>
-          </div>
-           
-       
-           
+          </v-flex>
+        </div>
       </div>
     </v-layout>
   </div>
@@ -102,13 +96,11 @@ import axios from "axios";
 import os from "os";
 import Swal from "sweetalert2";
 export default {
-  created() {
-
-  },
+  created() {},
   computed: {},
   data() {
     return {
-      codigoDistribuidor:"",
+      codigoDistribuidor: "",
       email: "",
       password: "",
       errorM: null,
@@ -128,37 +120,38 @@ export default {
 
     ingresar() {
       let me = this;
-      
-       
+
       axios
-        .post("usuario/login?data="+this.email+"&clave="+this.password+"&codigoDistribuidor="+this.codigoDistribuidor)
+        .post(
+          "usuario/login?data=" +
+            this.email +
+            "&clave=" +
+            this.password +
+            "&codigoDistribuidor=" +
+            this.codigoDistribuidor
+        )
         .then((respuesta) => {
-        // console.log(respuesta);
           if (respuesta.data.user.login.codigoDistribuidor == undefined) {
-            this.$store.dispatch(
-                    "guardarToken",
-                    respuesta.data.tokenReturn
-                  );
-                  this.$router.push({ name: "home" });
+            this.$store.dispatch("guardarToken", respuesta.data.tokenReturn);
+            this.$router.push({ name: "home" });
           } else {
-            
-                  this.$store.dispatch(
-                    "guardarToken",
-                    respuesta.data.tokenReturn
-                  );
-                  this.$router.push({ name: "home" });
-               
-         
+            this.$store.dispatch("guardarToken", respuesta.data.tokenReturn);
+            this.$router.push({ name: "home" });
           }
         })
-        .catch((err)=>{
-          if(err.response.status==500){
-            this.errorM=err.response.data.message
-          }else{
-            this.errorM="Ocurrio un error en el servidor";
-          }
+        .catch((err) => {
+       console.log(err.response.data);
+          Swal.fire({
+            title: "<strong>Error</strong>",
+            icon: "error",
+            html:err.response.data,
+            showCloseButton: true,
+            showCancelButton: true,
+            focusConfirm: false,
+           
+          });
          
-        })
+        });
     },
   },
 };
@@ -183,13 +176,13 @@ export default {
   height: 100%;
   margin-left: 0%;
 }
-#cajas{
+#cajas {
   width: 300px;
   height: 250px;
   margin-top: 35px;
 }
 #login {
-     display: flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   box-shadow: 5px 3px 5px rgb(127, 139, 133);
@@ -201,19 +194,18 @@ export default {
   /* opacity: 0.3; */
 }
 .boton {
-    -webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
-    width: 300px;
-     padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    opacity: 0.9;
-    font-size: 16px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  width: 300px;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  opacity: 0.9;
+  font-size: 16px;
 }
 
 .boton:hover {
-    background-color: #367e48; /* Green */
-    color: rgb(0, 255, 34);
+  background-color: #367e48; /* Green */
+  color: rgb(0, 255, 34);
 }
-
 </style>

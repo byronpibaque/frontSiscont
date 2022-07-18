@@ -550,10 +550,7 @@
                     </td>
                     <td class="text-xs-center blue--text">
                       {{
-                        props.item.descripcion +
-                        " " +
-                        props.item.detalleConcentracion +
-                        props.item.codigoConcentracion.descripcion
+                        props.item.descripcion 
                       }}
                     </td>
                     <td class="text-xs-center">
@@ -667,15 +664,15 @@
                   <v-text-field v-model="codigoBarra" label="Código Barra"></v-text-field>
                 </v-flex>
                 <v-flex xs3 sm3 md3>
-                  <v-text-field v-model="codigoLote" label="Código Lote"></v-text-field>
+                  <v-text-field v-model="codigoLote"  @change="verificarLote(codigoLote)" label="Código Lote"></v-text-field>
                 </v-flex>
-                <v-flex xs3 sm3 md3>
+                <v-flex xs3 sm3 md3 v-if="!banderaLote">
                   <v-text-field
                     v-model="fechaElaboracion"
                     label="Fecha elaboracion"
                   ></v-text-field>
                 </v-flex>
-                <v-flex xs3 sm3 md3>
+                <v-flex xs3 sm3 md3 v-if="!banderaLote">
                   <v-text-field
                     v-model="fechaCaducidad"
                     label="Fecha caducidad"
@@ -683,26 +680,36 @@
                 </v-flex>
 
                 <v-flex xs12 sm12 md12> </v-flex>
-                <v-flex xs6 sm6 md6>
+                <v-flex xs6 sm6 md6 v-if="!banderaLote">
                   <v-text-field
                     v-model="nombreComercial"
                     label="Nombre Comercial"
                   ></v-text-field>
                 </v-flex>
-                 <v-flex xs5 sm5 md5>
+                 <v-flex xs5 sm5 md5 v-if="!banderaLote">
                   <v-text-field
                     v-model="registroSanitario"
                     label="Registro Sanitario"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm12 md12> </v-flex>
-                <v-flex xs2 sm2 md2>
+                <v-flex xs2 sm2 md2 v-if="$store.state.usuario.codigoDistribuidor==undefined">
                   <v-text-field
                     v-model="fraccionesTotales"
                     label="Fracciones totales"
                   ></v-text-field>
                 </v-flex>
-                <v-flex xs2 sm2 md2>
+                <v-flex xs2 sm2 md2 v-else>
+                   <div v-if="!banderaLote" >
+                  <v-text-field
+                    v-model="fraccionesTotales"
+                    label="Fracciones totales"
+                    readonly
+                    disabled
+                  ></v-text-field>
+                  </div>
+                </v-flex>
+                <v-flex xs2 sm2 md2 v-if="!banderaLote">
                   <v-text-field
                     v-model="percha"
                     disabled
@@ -711,22 +718,22 @@
                 </v-flex>
                 <v-flex xs12 sm12 md12> </v-flex>
                 <v-flex xs2 sm2 md2>
-                  <v-text-field v-model="costoNeto" label="Costo Neto"></v-text-field>
+                  <v-text-field v-model="costoNeto" label="Costo Neto" v-if="!banderaLote"></v-text-field>
                 </v-flex>
                 <v-flex xs2 sm2 md2>
-                  <v-text-field v-model="pvm" label="PVM"></v-text-field>
+                  <v-text-field v-model="pvm" label="PVM" v-if="!banderaLote"></v-text-field>
                 </v-flex>
-                <v-flex xs2 sm2 md2>
+                <v-flex xs2 sm2 md2 v-if="!banderaLote">
                   <v-text-field
                     v-model="pvp"
                     label="PVP"
                     @change="calcularPunit()"
                   ></v-text-field>
                 </v-flex>
-                <v-flex xs2 sm2 md2>
+                <v-flex xs2 sm2 md2 v-if="!banderaLote">
                   <v-text-field v-model="punit" label="P. unitario"></v-text-field>
                 </v-flex>
-                <v-flex xs2 sm2 md2>
+                <v-flex xs2 sm2 md2 v-if="!banderaLote">
                   <v-text-field v-model="descuento" label="Descuento"></v-text-field>
                 </v-flex>
               </v-layout>
@@ -761,6 +768,16 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+      <v-flex v-if="$store.state.usuario.codigoDistribuidor==undefined">
+         <v-flex xs4 sm4 md4 v-if="banderainsumo">
+                  <v-autocomplete
+                    v-model="codigoBodega"
+                    :items="bodegas"
+                    label="Elegir bodega"
+                    @change="listarInventario(codigoBodega)"
+                  ></v-autocomplete>
+                </v-flex>
+      </v-flex>
       <v-flex xs12 xl12 sm12 s12 m12
         ><v-text-field
           v-model="search"
@@ -769,6 +786,7 @@
       
         ></v-text-field
       ></v-flex>
+      <!-- TABLA DE INVENTARIO -->
       <v-data-table
         :headers="CAB_inventario"
         :items="ARR_inventario"
@@ -777,7 +795,7 @@
       >
         <template v-slot:items="props">
           <td>
-            <v-icon small class="mr-2" @click="eliminar_inventario(props.item)"
+            <v-icon v-if="$store.state.usuario.codigoDistribuidor==undefined" small class="mr-2" @click="eliminar_inventario(props.item)"
               >delete</v-icon
             >
             <v-icon small class="mr-2" @click="actualizarProductoInventario(props.item)"
@@ -808,7 +826,8 @@
           <td class="blue--text">${{ props.item.pvm }}</td>
           <td class="blue--text">${{ props.item.pvp }}</td>
           <td class="blue--text">${{ props.item.punit }}</td>
-
+          <td class="green--text" v-if="props.item.iva">SI</td>
+          <td class="orange--text" v-else>NO</td>
           <td class="deep-purple lighten-4">
             {{ props.item.percha }}
           </td>
@@ -841,6 +860,10 @@ export default {
   props: {},
   data() {
     return {
+      concentracionTXT:"",
+      banderaLote:false,
+      codigoBodega:"",
+      bodegas:[],
       percha: "",
       banderainsumo: true,
       search: "",
@@ -937,6 +960,11 @@ export default {
           value: "punit",
           sortable: false,
         },
+         {
+          text: "IVA",
+          value: "iva",
+          sortable: false,
+        },
         { text: "Ubicacion en percha", value: "percha", sortable: false },
         { text: "# comprobante", value: "numComprobante", sortable: false },
         { text: "Lab. Fab.", value: "codigoFabricante.razonsocial", sortable: false },
@@ -976,8 +1004,77 @@ export default {
   },
   created() {
     this.listarProductosInventario();
+    this.obtenerBodegas();
   },
   methods: {
+    verificarLote(codigoLote){
+      let me = this;
+     
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
+      let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
+      let codigoUsuario = this.$store.state.usuario._id;
+      const resCode = this.obtenerBodega2();
+      resCode
+        .then((result) => {
+          axios
+            .get(
+              "inventario/queryV?codigoLote=" + codigoLote + "&codigoBodega=" + result,
+              configuracion
+            )
+            .then(function (response) {
+              if (response.status == 200) {
+                Swal.fire("Aviso", "Ya existe un producto con el codigo de lote: "+codigoLote+" registrado en la base de datos.", "error");
+                me.banderaLote=true
+             } else{
+               me.banderaLote=false
+             }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    listarInventario(codigoB){
+      let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
+         axios
+            .get("inventario/list?codigoBodega=" + codigoB, configuracion)
+            .then(function (response) {
+              me.ARR_inventario = response.data;
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+      
+    },
+    obtenerBodegas(){
+      if(this.$store.state.usuario.codigoDistribuidor==undefined){
+        let me = this;
+        let ArrayT = [];
+        let header = { Token: this.$store.state.token };
+        let configuracion = { headers: header };
+        axios
+          .get("bodega/list", configuracion)
+          .then(function (response) {
+            ArrayT = response.data;
+            ArrayT.map(function (x) {
+            me.bodegas.push({
+                text:
+                  x.descripcion,
+                value: x._id,
+              });
+            });
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+    },
     buscar(code) {
       let me = this;
       me.ARR_inventario = [];
@@ -1086,16 +1183,21 @@ export default {
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
       let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
-      const response = await axios.get(
+      if(codigoDistribuidor!=undefined){
+         const response = await axios.get(
         "bodega/query?codigoDistribuidor=" + codigoDistribuidor,
         configuracion
       );
       return response.data._id;
+      }
+     
     },
     listarProductosInventario() {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
+       let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
+      if(codigoDistribuidor!=undefined){
       const resCode = this.obtenerBodega2();
       resCode
         .then((result) => {
@@ -1111,6 +1213,7 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+        }
     },
     limpiarInventario() {
       this.idInventarioActualizar = "";
@@ -1130,8 +1233,15 @@ export default {
       this.codigoProveedor = "";
       this.codigoProducto = "";
       this.fechaElaboracion = "";
-      this.codigoBodega = "";
-    },
+      // this.codigoBodega = "";
+      this.banderaLote=false
+      this.banderaActualizar=0
+      this.fcajaP=""
+      this.concentracionP=""
+      this.presentacionP=""
+      this.percha=""
+
+},
     validar_inventario() {
       this.valida = 0;
       this.validaMensaje = [];
@@ -1208,8 +1318,16 @@ export default {
         return;
       }
       const respuesta = this.obtenerBodega2();
-      respuesta
+         let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
+      let codigoBB=""
+              respuesta
         .then((result) => {
+          if(codigoDistribuidor!=undefined){
+            codigoBB=result
+          }else{
+            codigoBB=me.codigoBodega
+          }
+   
           let nombre = this.nombreComercial;
           let rsani=this.registroSanitario;
           let codi = this.codigoLote;
@@ -1233,7 +1351,7 @@ export default {
                   punit: this.punit,
                   costoNeto: this.costoNeto,
                   codigoUsuario: this.$store.state.usuario._id,
-                  codigoBodega: result,
+                  codigoBodega: codigoBB,
                   codigoFabricante: this.codigoFabricante,
                   codigoProveedor: this.codigoProveedor,
                   codigoProducto: this.codigoProducto,
@@ -1247,8 +1365,10 @@ export default {
                     "Se actualizó correctamente el producto.",
                     "success"
                   );
+                   me.listarInventario(codigoBB)
                   me.limpiarInventario();
                   me.modalInventario = 0;
+                 
                 } else {
                   Swal.fire(
                     "Ops!",
@@ -1281,7 +1401,7 @@ export default {
                   punit: this.punit,
                   costoNeto: this.costoNeto,
                   codigoUsuario: this.$store.state.usuario._id,
-                  codigoBodega: result,
+                  codigoBodega: codigoBB,
                   codigoFabricante: this.codigoFabricante,
                   codigoProveedor: this.codigoProveedor,
                   codigoProducto: this.codigoProducto,
@@ -1343,9 +1463,7 @@ export default {
           me.productos.push({
               text:
                 x.descripcion +
-                " " +
-                x.detalleConcentracion +
-                x.codigoConcentracion.descripcion+" C*:"+x.fraccionCaja,
+              " C*:"+x.fraccionCaja,
               value: x._id,
             });
           });
@@ -1436,6 +1554,11 @@ export default {
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
       let codigoUsuario = this.$store.state.usuario._id;
+       const dataC = this.ConsultaConcentracion(me.codigoConcentracion)
+      let datass = ""
+      dataC.then((result) => {
+        datass=result
+      this.ConsultaConcentracion(me.codigoConcentracion)
       if (this.validar_guardar()) {
         return;
       }
@@ -1449,7 +1572,7 @@ export default {
       axios
         .put("producto/actualizar", {
           _id: this.idActualizar,
-          descripcion: descripcion.toUpperCase(),
+           descripcion: descripcion.toUpperCase()+' '+this.detalleConcentracion+datass,
           fraccionCaja: this.fraccionCaja,
           contenidoNeto: this.contenidoNeto,
           detalleConcentracion: this.detalleConcentracion,
@@ -1475,6 +1598,7 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+    })
     },
     listar_productos() {
       let me = this;
@@ -1500,8 +1624,26 @@ export default {
       this.codigoConcentracion = "";
       this.banderainsumo = true;
     },
+
+      async ConsultaConcentracion(codigo) {
+      let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
+      let code = this.$store.state.usuario.codigoDistribuidor;
+
+      const response = await axios.get(
+        "concentracion/query?_id=" + codigo,
+        configuracion
+      );
+      return response.data.descripcion;
+    },
     guardarProducto() {
       let me = this;
+      const dataC = this.ConsultaConcentracion(me.codigoConcentracion)
+      let datass = ""
+      dataC.then((result) => {
+        datass=result
+     
 
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
@@ -1520,7 +1662,7 @@ export default {
         .post(
           "producto/add",
           {
-            descripcion: descripcion.toUpperCase(),
+            descripcion: descripcion.toUpperCase()+' '+this.detalleConcentracion+datass,
             fraccionCaja: this.fraccionCaja,
             contenidoNeto: this.contenidoNeto,
             detalleConcentracion: this.detalleConcentracion,
@@ -1544,6 +1686,7 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+         })
     },
     validar_guardar() {
       this.valida = 0;
@@ -1634,6 +1777,7 @@ export default {
           ArrayT = response.data;
           ArrayT.map(function (x) {
             me.concentraciones.push({ text: x.descripcion, value: x._id });
+           
           });
         })
         .catch(function (error) {

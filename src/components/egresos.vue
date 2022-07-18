@@ -27,7 +27,7 @@
               <v-text-field
                 v-model="numComprobante"
                 label="Número Comprobante"
-                readonly
+               
               ></v-text-field>
             </v-flex>
          
@@ -63,7 +63,7 @@
             <v-flex xs12 sm12 md12 lg12 xl12>
               <v-textarea
                 v-model="descripcion"
-                label="Descripcion de la compra"
+                label="Descripcion del egreso"
               ></v-textarea>
             </v-flex>
              <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
@@ -148,7 +148,18 @@
                           parseInt(props.item.fracciones))
                       }}
                     </td>
-              
+                    <td  class="text-xs-center blue--text">
+                                {{props.item.stock}}
+                    </td>
+                    <td class="text-xs-center green--text">
+                     {{
+                        props.item.codigoLote
+                      }}
+                    </td>
+                    
+                    <td class="text-xs-center green--text">
+                      {{props.item.registroSanitario}}
+                    </td>
                     <td class="text-xs-center green--text">
                       <v-text-field prefix="$" v-model="props.item.pvp"></v-text-field>
                     </td>
@@ -270,10 +281,7 @@
                       <strong>Total:</strong>
                       ${{ (total = calcularTotal) }}
                     </v-flex>
-                    <v-flex class="text-xs-right">
-                      <strong>Total retenido:</strong>
-                      ${{ totalRet }}
-                    </v-flex>
+       
                   </div>
                 </v-layout>
               </template>
@@ -381,6 +389,7 @@
         <template v-slot:items="props">
           <td>
             <v-icon small class="mr-2" @click="verDetalleC(props.item)">tab</v-icon>
+            <v-icon small class="mr-2" @click="GenerarPDF(props.item)" v-if="props.item.estado" >picture_as_pdf</v-icon>
             <template v-if="props.item.estado">
               <v-icon small @click="activarDesactivarMostrar(2, props.item)"
                 >block</v-icon
@@ -398,14 +407,9 @@
           <td>
             {{ props.item.numComprobante }}
           </td>
-          <td v-if="props.item.claveAcceso">
-            {{ props.item.claveAcceso }}
-          </td>
-          <td v-else></td>
+    
           <td>${{ props.item.subTotal }}</td>
-          <td>${{ props.item.total }}</td>
-          <td v-if="props.item.totalRetenido">${{ props.item.totalRetenido }}</td>
-          <td v-else class="red--text">NO REGISTRA RETENCION</td>
+          <td>${{ props.item.total }}</td> 
           <td>${{ props.item.totalimpuesto }}</td>
           <td>${{ props.item.totaldescuento }}</td>
           <td>
@@ -416,7 +420,7 @@
               <span class="green--text">Aceptado</span>
             </div>
             <div v-else>
-              <span class="red--text">Anulado</span>
+              <span class="orange--text">Pendiente</span>
             </div>
           </td>
         </template>
@@ -535,10 +539,10 @@ export default {
         { text: "Opciones", value: "borrar", sortable: false },
         { text: "DESCRIPCION", value: "descripcion", sortable: false },
         { text: "# COMPROBANTE", value: "numComprobante", sortable: false },
-        { text: "Clave de acceso", value: "claveAcceso", sortable: false },
+       
         { text: "Sub Total", value: "subTotal", sortable: false },
         { text: "Total", value: "total", sortable: false },
-        { text: "Total retenido", value: "totalRetenido", sortable: false },
+      
         { text: "Impuestos", value: "totalimpuesto", sortable: false },
         { text: "Descuentos", value: "totaldescuento", sortable: false },
         { text: "Fecha de emision", value: "fechaFactura", sortable: false },
@@ -574,7 +578,11 @@ export default {
        
         { text: "F * Caja", value: "fxcaja", sortable: false },
         { text: "F Totales", value: "fraccionesTotales", sortable: false },
-     
+        { text: "Stock", value: "fraccionesTotales", sortable: false },
+
+        { text: "Codigo Lote", value: "codigoLote", sortable: false },
+        { text: "Reg. San", value: "registroSanitario", sortable: false },
+
         { text: "PVP", value: "pvP", sortable: false },
         { text: "P. UNIT.", value: "punit", sortable: false },
         { text: "IVA?", value: "iva", sortable: false },
@@ -601,6 +609,91 @@ export default {
   props: {},
 
   methods: {
+    GenerarPDF(data){
+   
+          let deta = [];
+      for (let index = 0; index < data.detalles.length; index++) {
+        const element = data.detalles[index];
+        let cant = 0;
+        let pu = 0;
+        let totalsinimpuesto = 0;
+        let codigoPorcent = 0;
+        let calculoporcentual = 0;
+        let descto = 0;
+        let tarifa = 0;
+        let val = 0;
+        cant = parseInt(element.fraccionesTotales);
+        pu = parseFloat(element.punit);
+        val = cant * pu;
+        totalsinimpuesto = val.toFixed(2);
+        if (data.detalles[index].iva != 0) {
+          codigoPorcent = 2;
+          calculoporcentual = (totalsinimpuesto * 0.12).toFixed(2);
+          tarifa = 12;
+        } else {
+          codigoPorcent = 0;
+          calculoporcentual = 0;
+          tarifa = 0;
+        }
+    
+        let det = [];
+        det = [
+          {
+            codigoBarras: data.detalles[index].codigoBarra,
+            codigoLote: data.detalles[index].codigoLote,
+            producto: data.detalles[index].producto,
+            nombreComercial: data.detalles[index].nombreComercial,
+            fechas: data.detalles[index].fechaCaducidad,
+            registroSanitario: data.detalles[index].registroSanitario,
+            cantidad: cant,
+            precio: pu,
+            descuento:  data.detalles[index].descuento,
+            total: totalsinimpuesto,
+          },
+        ];
+
+        deta.push(det);
+      }
+
+       axios
+        .post("http://localhost:5000/api/pdf/pdfE", {
+        
+          numComprobante: data.numComprobante,
+          fecha: this.formatearFecha(data.fechaFactura),
+         
+          clienteDireccion: data.codigoCliente.direccion,
+          clienteDocumento: data.codigoCliente.numDocumento,
+          clienteNombre: data.codigoCliente.nombres,
+          detalles: {
+            detalle: deta,
+          },
+          clienteEmail: data.codigoCliente.email,
+          clienteTelefono: data.codigoCliente.telefono,
+          subtotal: data.subTotal,
+          descuento: data.totalDescuento,
+          iva: data.totalImpuesto,
+          total: data.total,
+          razonSocial: data.codigoDistribuidor.razonSocial,
+          ruc: data.codigoDistribuidor.ruc,
+        })
+        .then(function (response) {
+          if (response.status==200) {
+            Swal.fire({
+              title: '<strong>Generado <u>Copia el LINK:</u></strong>',
+              icon: 'success',
+              html:
+                response.data
+            })
+            // Swal.fire("Noticias!", "Archivo PDF creado exitosamente \n"+response.data, "success");
+       
+          }else{
+            console.log(response.data.message);
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     ObtenerConteo(){
       let me = this;
       let header = { Token: this.$store.state.token };
@@ -629,7 +722,7 @@ export default {
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
       axios
-        .get("compras/query?_id=" + id, configuracion)
+        .get("egresos/query?_id=" + id, configuracion)
         .then(function (response) {
           me.detalles = response.data.detalles;
           me.detallesFP = response.data.formaPago;
@@ -640,20 +733,21 @@ export default {
     },
 
     verDetalleC(data) {
+ 
       this.totalRet = data.totalRetenido;
       this.verNuevo = 1;
       this.numComprobante = data.numComprobante;
       this.descripcion = data.descripcion;
-      this.doc_cliente = data.codigoProveedor.ruc;
-      this.nombres_Cliente = data.codigoProveedor.razonsocial;
-      this.direccion_Cliente = data.codigoProveedor.direccion;
+      this.doc_cliente = data.codigoCliente.numDocumento;
+      this.nombres_Cliente = data.codigoCliente.nombres;
+      this.direccion_Cliente = data.codigoCliente.direccion;
       this.fechaFactura = this.formatearFecha(data.fechaFactura);
 
       this.listarDetalles(data._id);
     },
     formatearFecha(value) {
       if (value) {
-        return moment(String(value)).format("DD/MM/YYYY");
+        return moment(String(value)).format("YYYY-MM-DD");
       }
     },
     listar() {
@@ -665,7 +759,7 @@ export default {
       if (codigoDistribuidor == undefined) {
       } else {
         axios
-          .get("compras/list?codigoDistribuidor=" + codigoDistribuidor, configuracion)
+          .get("egresos/list?codigoDistribuidor=" + codigoDistribuidor, configuracion)
           .then(function (response) {
             if (response.status == 200) {
               // console.log(response.data);
@@ -781,17 +875,6 @@ export default {
           "Debe ingresar al menos un detalle a la factura de compra."
         );
       }
-      /*       cantidad: 0,
-          fracciones: 0,
-          bonificacion: 0,
-          fxcaja: data.codigoProducto.fraccionCaja,
-          fraccionesTotales: data.fraccionesTotales,
-          costoNeto: 0,
-          pvp: data.pvp,
-          pvm: data.pvm,
-          punit: data.punit,
-          descuento: data.descuento,
-          iva: data.iva, */
       for (let i = 0; i < this.detalles.length; i++) {
         const L = this.detalles[i];
         if (L.cantidad.length == 0) {
@@ -806,14 +889,8 @@ export default {
         if (parseInt(L.fracciones) < 0) {
           this.validaMensaje.push("FRACCIONES no puede ser un valor negativo.");
         }
-        if (L.bonificacion.length == 0) {
-          this.validaMensaje.push("BONIFICACION no puede ser un valor vacio.");
-        }
-        if (parseInt(L.bonificacion) < 0) {
-          this.validaMensaje.push("BONIFICACION no puede ser un valor negativo.");
-        }
-        if (L.pvm == 0 || L.pvm.length == 0) {
-          this.validaMensaje.push("PVM no puede ser un valor vacio.");
+        if(parseInt(L.fraccionesTotales)>parseInt(L.stock)){
+          this.validaMensaje.push("Fracciones totales no puede superar el Stock de inventario."); 
         }
         if (L.pvp == 0 || L.pvp.length == 0) {
           this.validaMensaje.push("PVP no puede ser un valor vacio.");
@@ -824,9 +901,7 @@ export default {
         if (L.descuento.length == 0) {
           this.validaMensaje.push("DESCUENTO no puede ser un valor vacio.");
         }
-        if (L.pvm < 0) {
-          this.validaMensaje.push("PVM no puede ser negativo.");
-        }
+  
         if (L.pvp < 0) {
           this.validaMensaje.push("PVP no puede ser negativo.");
         }
@@ -857,12 +932,14 @@ export default {
       let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
       let codigoUsuario = this.$store.state.usuario._id;
       let fecha = new Date(this.fechaFactura+' 05:00:00')
+      let nc = this.numComprobante
+      let des = this.descripcion
       axios
         .post(
-          "compras/add",
+          "egresos/add",
           {
-            claveAcceso: this.claveAcceso,
-            numComprobante: this.numComprobante,
+         
+            numComprobante:nc.toUpperCase(),
             fechaFactura: fecha.toISOString(),
             subTotal: this.subtotal,
             total: this.total,
@@ -870,8 +947,8 @@ export default {
             totalDescuento: this.totaldescuento,
             detalles: this.detalles,
             formaPago: this.detallesFP,
-            descripcion: this.descripcion,
-            codigoProveedor: this._idCliente,
+            descripcion: des.toUpperCase(),
+            codigoCliente: this._idCliente,
             codigoBodega: this.codigoBodega,
             codigoDistribuidor: codigoDistribuidor,
             codigoUsuario: codigoUsuario,
@@ -882,7 +959,7 @@ export default {
           if (response.status == 200) {
             me.detallesFP.forEach((element) => {
               if (element.plazo != 0) {
-                me.generarCuentaPorPagar(
+                me.generarCuentaPorCobrar(
                   element.total,
                   element.unidadTiempo,
                   element.plazo,
@@ -897,9 +974,9 @@ export default {
                 );
               }
             });
-            Swal.fire("Noticias!", "Se guardo correctamente la compra.", "success");
+            Swal.fire("Noticias!", "Se guardo correctamente el egreso.", "success");
           } else {
-            Swal.fire("Ops!", "Hubo problemas al intentar guardar la compra", "err");
+            Swal.fire("Ops!", "Hubo problemas al intentar guardar el egreso", "err");
           }
           me.limpiar();
           me.ocultarNuevo();
@@ -915,15 +992,15 @@ export default {
       let configuracion = { headers: header };
       let code = this.$store.state.usuario.codigoDistribuidor;
 
-      const response = await axios.get("cuentasporpagar/contar", configuracion);
+      const response = await axios.get("cuentasporcobrar/contar", configuracion);
       return response.data;
     },
-    generarCuentaPorPagar(
+    generarCuentaPorCobrar(
       totalFP,
       unidadTiempo,
       plazo,
       codigoCompra,
-      codigoProveedor,
+      codigoCliente,
       codigoDistribuidor,
       codigoUsuario,
       totalF,
@@ -942,7 +1019,7 @@ export default {
 
           axios
             .post(
-              "cuentasporpagar/add",
+              "cuentasporcobrar/add",
               {
                 numComprobante: cuentaCuentas,
                 plazo: plazo,
@@ -950,7 +1027,7 @@ export default {
                 totalPagado:0,
                 unidadTiempo: unidadTiempo,
                 codigoCompra:codigoCompra,
-                codigoProveedor: codigoProveedor,
+                codigoCliente: codigoCliente,
                 codigoDistribuidor: codigoDistribuidor,
                 codigoUsuario: codigoUsuario,
                 totalFactura: totalF,
@@ -985,6 +1062,7 @@ export default {
       return sw;
     },
     agregarDetalle(data) {
+     console.log(data);
       this.errorArticulo = null;
       if (this.encuentra(data._id) == true) {
         this.errorArticulo = "El artículo ya ha sido agregado.";
@@ -994,17 +1072,17 @@ export default {
           producto: data.nombreComercial,
           cantidad: 0,
           fracciones: 0,
-     
           fxcaja: data.codigoProducto.fraccionCaja,
           fraccionesTotales: data.fraccionesTotales,
-         
+          stock: data.fraccionesTotales,
           pvp: data.pvp,
-         
           punit: data.punit,
           descuento: data.descuento,
           iva: data.iva,
+          codigoLote:data.codigoLote,
+          registroSanitario:data.registroSanitario,
+          fechaCaducidad:data.fechaCaducidad
         });
-
         this.codigo = "";
       }
     },
@@ -1084,7 +1162,7 @@ export default {
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
       axios
-        .put("compras/activate", { _id: this.adId }, configuracion)
+        .put("egresos/activate", { _id: this.adId }, configuracion)
         .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -1101,7 +1179,7 @@ export default {
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
       axios
-        .put("compras/deactivate", { _id: this.adId }, configuracion)
+        .put("egresos/deactivate", { _id: this.adId }, configuracion)
         .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;

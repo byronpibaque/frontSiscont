@@ -340,7 +340,7 @@ router.beforeEach((to, from, next) => {
     }
   }
   else{
-    next({name:'login'})
+    router.push({ path: 'login' }).catch(()=>{});
   }
 })
 

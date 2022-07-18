@@ -125,12 +125,14 @@
                         >delete</v-icon
                       >
                     </td>
+                           <td class="blue--text">{{ props.item.codigoBarra }}</td>
+                        <td class="blue--text">{{ props.item.codigoLote }}</td>
                     <td class="text-xs-center blue--text">
                       {{ props.item.producto }}
                     </td>
-                    <td class="text-xs-center">
+                    <!-- <td class="text-xs-center">
                       <v-text-field v-model="props.item.cantidad"></v-text-field>
-                    </td>
+                    </td> -->
                     <td class="text-xs-center">
                       <v-text-field v-model="props.item.fracciones"></v-text-field>
                     </td>
@@ -144,37 +146,17 @@
                       {{
                         (props.item.fraccionesTotales =
                           (parseInt(props.item.cantidad) +
-                            parseInt(props.item.bonificacion)) *
-                            parseInt(props.item.fxcaja) +
+                            parseInt(props.item.bonificacion)) +
                           parseInt(props.item.fracciones))
                       }}
                     </td>
                     <td class="text-xs-center green--text">
-                      $
-                      {{
-                        (props.item.costoNeto = (
-                          ((props.item.cantidad *
-                            props.item.fxcaja *
-                            (props.item.pvm / props.item.fxcaja) -
-                            (props.item.cantidad *
-                              props.item.fxcaja *
-                              (props.item.pvm / props.item.fxcaja) *
-                              props.item.descuento) /
-                              100) /
-                            props.item.fraccionesTotales) *
-                          props.item.fxcaja
-                        ).toFixed(2))
-                      }}
+                       <v-text-field prefix="$" v-model="props.item.costoNeto" readonly></v-text-field>
                     </td>
                     <td class="text-xs-center green--text">
-                      <v-text-field prefix="$" v-model="props.item.pvm"></v-text-field>
+                      <v-text-field prefix="$" v-model="props.item.pcompra" @change="calcularCostoNeto()"></v-text-field>
                     </td>
-                    <td class="text-xs-center green--text">
-                      <v-text-field prefix="$" v-model="props.item.pvp"></v-text-field>
-                    </td>
-                    <td class="text-xs-center green--text">
-                      <v-text-field prefix="$" v-model="props.item.punit"></v-text-field>
-                    </td>
+                   
 
                     <td class="text-xs-center green--text" v-if="props.item.iva">
                       <span>SI</span>
@@ -185,19 +167,19 @@
                     </td>
                     <td class="text-xs-center green--text">
                       <v-text-field
-                        suffix="%"
+                        prefix="$"
                         v-model="props.item.descuento"
+                         @change="calcularCostoNeto()"
                       ></v-text-field>
                     </td>
-                    <td class="text-xs-center green--text">
+                    <td class="text-xs-center green--text" v-if="props.item.iva">
                       ${{
-                        (
-                          ((parseInt(props.item.cantidad) +
-                            parseInt(props.item.bonificacion)) *
-                            parseInt(props.item.fxcaja) +
-                            parseInt(props.item.fracciones)) *
-                          parseFloat(props.item.punit)
-                        ).toFixed(2)
+                     ((parseFloat(props.item.fracciones)*parseFloat(props.item.pcompra))+(parseFloat(props.item.fracciones)*parseFloat(props.item.pcompra)*0.12)-parseFloat(props.item.descuento)).toFixed(2)
+                      }}
+                    </td>
+                      <td class="text-xs-center green--text" v-else>
+                      ${{
+                    ( (parseFloat(props.item.fracciones)*parseFloat(props.item.pcompra))-parseFloat(props.item.descuento)).toFixed(2)
                       }}
                     </td>
                   </template>
@@ -377,6 +359,12 @@
                         <td class="blue--text">{{ props.item.codigoBarra }}</td>
                         <td class="blue--text">{{ props.item.codigoLote }}</td>
                         <td class="">{{ props.item.nombreComercial }}</td>
+                        <td class="">{{ props.item.codigoProducto.fraccionCaja }}</td>
+                        <td class="">{{ props.item.fraccionesTotales }}</td>
+                        <td class="">{{ props.item.codigoFabricante.razonsocial }}</td>
+
+
+
                       </template>
                     </v-data-table>
                   </template>
@@ -464,22 +452,12 @@ export default {
     },
     calcularDescuento: function () {
       let resultado = 0.0;
-      for (let index = 0; index < this.detalles.length; index++) {
-        let cant = 0;
-        let pu = 0;
-        let totalsinimpuesto = 0;
-        let codigoPorcent = 0;
-        let calculoporcentual = 0;
-        let descto = 0;
-        let tarifa = 0;
-        let val = 0;
+       for (let index = 0; index < this.detalles.length; index++) {
+       
         const element = this.detalles[index];
-        cant = parseInt(element.fraccionesTotales);
-        pu = parseFloat(element.punit);
-        descto = parseFloat(element.descuento);
-        val = (cant * pu * descto) / 100;
-        resultado = resultado + val;
+        resultado = resultado +(parseFloat(element.descuento))
       }
+     
 
       return resultado.toFixed(2);
     },
@@ -496,7 +474,7 @@ export default {
         let val = 0;
         const element = this.detalles[index];
         cant = parseInt(element.fraccionesTotales);
-        pu = parseFloat(element.punit);
+        pu = parseFloat(element.pcompra);
         val = cant * pu;
         if (element.iva != 0) {
           resultado = resultado + val * 0.12;
@@ -509,18 +487,17 @@ export default {
       let resultado = 0.0;
       for (let index = 0; index < this.detalles.length; index++) {
         let cant = 0;
-        let pu = 0;
-        let totalsinimpuesto = 0;
-        let codigoPorcent = 0;
-        let calculoporcentual = 0;
-        let descto = 0;
-        let tarifa = 0;
-        let val = 0;
+        let fracc = 0;
+        let fxc=0
+        let val=0
+        let totalfracciones = 0;
         const element = this.detalles[index];
-        cant = parseInt(element.fraccionesTotales);
-        pu = parseFloat(element.punit);
-        val = cant * pu;
-        resultado = resultado + val;
+        cant = parseInt(element.cantidad);
+        fxc = parseInt(element.fxcaja)
+        fracc = parseFloat(element.fracciones);
+        totalfracciones = (cant * fxc) + fracc ;
+       
+        resultado = resultado + totalfracciones*parseFloat(element.pcompra);
       }
 
       return resultado.toFixed(2);
@@ -571,9 +548,12 @@ export default {
       cabeceraArticulos: [
         { text: "Seleccionar", value: "seleccionar", sortable: false },
 
-        { text: "Codigo Barras", value: "codigoBarras", sortable: false },
+        { text: "Codigo Barras", value: "codigoBarra", sortable: false },
         { text: "Codigo Lote", value: "codigoLote", sortable: false },
         { text: "Nombre Comercial", value: "nombreComercial", sortable: false },
+          { text: "F x Caja", value: "fraccionCaja", sortable: false },
+            { text: "Stock", value: "fraccionesTotales", sortable: false },
+              { text: "Laboratorio", value: "codigoFabricante.descripcion", sortable: false },
       ],
       dialog: 0,
       total: 0,
@@ -587,16 +567,17 @@ export default {
       valida: false,
       cabeceraDetalles: [
         { text: "Borrar", value: "borrar", sortable: false },
+          { text: "Codigo Barras", value: "codigoBarra", sortable: false },
+        { text: "Codigo Lote", value: "codigoLote", sortable: false },
         { text: "Producto", value: "producto", sortable: false },
-        { text: "Cantidad", value: "cantidad", sortable: false },
+        // { text: "Cantidad", value: "cantidad", sortable: false },
         { text: "Fracciones", value: "fracciones", sortable: false },
         { text: "Bonificacion", value: "bonificacion", sortable: false },
         { text: "F * Caja", value: "fxcaja", sortable: false },
         { text: "F Totales", value: "fraccionesTotales", sortable: false },
         { text: "Costo Neto", value: "costoNeto", sortable: false },
-        { text: "PVM", value: "pvM", sortable: false },
-        { text: "PVP", value: "pvP", sortable: false },
-        { text: "P. UNIT.", value: "punit", sortable: false },
+        { text: "P Compra", value: "pcompra", sortable: false },
+   
         { text: "IVA?", value: "iva", sortable: false },
         { text: "Descuento", value: "descuento", sortable: false },
         { text: "Sub Total", value: "subtotal", sortable: false },
@@ -619,6 +600,27 @@ export default {
   },
   props: {},
   methods: {
+    calcularCostoNeto(){
+      
+      this.detalles.forEach(element => {
+       
+        let fxc=parseInt(element.fxcaja)
+        let f=parseFloat(element.fracciones)
+        let desc=parseFloat(element.descuento)
+       if(element.iva){
+          let imp= parseFloat(f)*parseFloat(element.pcompra)*0.12
+          let subtotal= (parseFloat(f)*parseFloat(element.pcompra)-desc)+imp
+          let cNeto = (parseFloat(subtotal) / parseFloat(element.fraccionesTotales))
+          element.costoNeto=parseFloat(cNeto).toFixed(2)  
+       }else{
+        let subtotal= parseFloat(f)*parseFloat(element.pcompra)-desc
+        let cNeto = (parseFloat(subtotal) / parseFloat(element.fraccionesTotales))
+        element.costoNeto=parseFloat(cNeto).toFixed(2)
+       }
+          
+        
+      });
+    },
     Agregarformapago() {
       let me = this;
       me.detallesFP.unshift({
@@ -748,6 +750,7 @@ export default {
           if (response.status == 206) {
             Swal.fire("Aviso", response.data.message, "error");
           } else {
+            console.log(response.data);
             me.articulos = response.data;
           }
         })
@@ -995,6 +998,8 @@ export default {
       } else {
         this.detalles.unshift({
           _id: data._id,
+          codigoLote:data.codigoLote,
+          codigoBarra:data.codigoBarra,
           producto: data.nombreComercial,
           cantidad: 0,
           fracciones: 0,
@@ -1002,10 +1007,11 @@ export default {
           fxcaja: data.codigoProducto.fraccionCaja,
           fraccionesTotales: data.fraccionesTotales,
           costoNeto: 0,
+          pcompra:0,
           pvp: data.pvp,
           pvm: data.pvm,
           punit: data.punit,
-          descuento: data.descuento,
+          descuento: 0,
           iva: data.iva,
         });
 

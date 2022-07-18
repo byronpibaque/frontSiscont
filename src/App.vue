@@ -245,6 +245,10 @@
         >Usuario: {{ usuario() }}</span
       >
       <v-spacer></v-spacer>
+       <span class="hidden-sm-and-down" v-if="$store.state.usuario"
+        >Rol: {{ rol() }}</span
+      >
+      <v-spacer></v-spacer>
       <span class="hidden-sm-and-down" v-if="$store.state.usuario"
         >Distribuidor: {{ farmacia() }}</span
       >
@@ -268,7 +272,7 @@
       <v-layout justify-center>
         <v-flex text-xs-center>
           <v-card flat tile id="tool" class="white--text">
-            <v-card-text class="white--text pt-0">IntegraCont &copy;2021</v-card-text>
+            <v-card-text class="white--text pt-0">Acounting &copy;2021</v-card-text>
           </v-card>
         </v-flex>
       </v-layout>
@@ -286,6 +290,7 @@ export default {
       drawer: true,
       login: "",
       user: "",
+      rold:"",
       farma: "",
     };
   },
@@ -362,6 +367,24 @@ export default {
     },
     usuario() {
       return this.$store.state.usuario.usuario;
+    },
+    rol(){
+     let me = this;
+      let header = { Token: this.$store.state.token };
+      let codigoROl = this.$store.state.usuario.rol;
+      let configuracion = { headers: header };
+   
+        axios
+          .get("rol/query?_id=" + codigoROl, configuracion)
+          .then(function (response) {
+            
+            me.rold = response.data.descripcion;
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+  
+      return this.rold;
     },
     isMobile() {
       if (
