@@ -5,14 +5,9 @@
         <v-toolbar-title>Perchas</v-toolbar-title>
         <v-divider class="mx-2" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <v-text-field
-          class="text-xs-center"
-          v-model="search"
-          append-icon="search"
-          label="Búsqueda"
-          single-line
-          hide-details
-        ></v-text-field>
+        <v-text-field class="text-xs-center" v-model="search" append-icon="search"
+          label="Búsqueda" single-line hide-details>
+        </v-text-field>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="700px">
           <template v-slot:activator="{ on }">
@@ -88,14 +83,8 @@
           </v-card>
         </v-dialog>
       </v-toolbar>
-      <v-data-table
-        v-if="!verNuevo"
-        :headers="cabecera"
-        :items="perchas"
-        class="elevation-1"
-        :items-per-page="5"
-        :search="search"
-      >
+      <v-data-table v-if="!verNuevo" :headers="cabecera" :items="perchas"
+        class="elevation-1" :items-per-page="5" :search="search">
         <template v-slot:items="props">
           <td>
             <v-icon small class="mr-2" @click="verDetalle(props.item)">tab</v-icon>
@@ -113,11 +102,7 @@
 </template>
 
 <script>
-import moment from "moment";
 import axios from "axios";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import Swal from "sweetalert2";
 export default {
   created() {
     this.listar();

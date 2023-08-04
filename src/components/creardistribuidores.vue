@@ -426,7 +426,7 @@ export default {
  
   },
   created () {
-      this.listar()
+    this.listar()
   },
 
 }

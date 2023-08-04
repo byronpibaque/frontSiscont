@@ -55,7 +55,7 @@
             </v-text-field>
           </v-flex>
           <v-flex>
-            <v-text-field
+            <!-- <v-text-field
               prepend-icon="generating_tokens"
               autofocus
               color="accent"
@@ -63,7 +63,10 @@
               label="Token de acceso"
               required
             >
-            </v-text-field>
+            </v-text-field> -->
+            <v-select v-model="select" :items="listDistribuidores" item-text="nombreComercial" 
+              item-value="codigoDistribuidor" label="Selecciona una Distribuidora" persistent-hint return-object single-line prepend-icon="inventory">
+            </v-select>
           </v-flex>
           <v-flex>
             <v-text-field
@@ -96,11 +99,16 @@ import axios from "axios";
 import os from "os";
 import Swal from "sweetalert2";
 export default {
+  name: 'Login',
   created() {},
   computed: {},
   data() {
     return {
-      codigoDistribuidor: "",
+      listDistribuidores: [],
+      select: {
+        codigoDistribuidor:"60a285006626313363286dfe",
+        nombreComercial:"COFARMO DISTRIBUCIONES"
+      },
       email: "",
       password: "",
       errorM: null,
@@ -117,43 +125,44 @@ export default {
         return false;
       }
     },
-
-    ingresar() {
+    async getDistribuidoras(){      
       let me = this;
-
-      axios
-        .post(
-          "usuario/login?data=" +
-            this.email +
-            "&clave=" +
-            this.password +
-            "&codigoDistribuidor=" +
-            this.codigoDistribuidor
-        )
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
+      axios.get("distribuidor/list", configuracion).then(function({ data }) {
+        data.forEach(distribuidora => {
+          me.listDistribuidores.push({
+            codigoDistribuidor: distribuidora._id,
+            nombreComercial: distribuidora.nombreComercial
+          })
+        });
+      }).catch(function(error) {
+        console.log(error);
+      });
+    },
+    ingresar() {
+      axios.post(
+          "usuario/login?data=" + this.email +"&clave=" + this.password +"&codigoDistribuidor=" +
+            this.select.codigoDistribuidor)
         .then((respuesta) => {
           if (respuesta.data.user.login.codigoDistribuidor == undefined) {
             this.$store.dispatch("guardarToken", respuesta.data.tokenReturn);
             this.$router.push({ name: "home" });
-          } else {
+          }else {
             this.$store.dispatch("guardarToken", respuesta.data.tokenReturn);
             this.$router.push({ name: "home" });
           }
-        })
-        .catch((err) => {
-       console.log(err.response.data);
-          Swal.fire({
-            title: "<strong>Error</strong>",
-            icon: "error",
-            html:err.response.data,
-            showCloseButton: true,
-            showCancelButton: true,
-            focusConfirm: false,
-           
+        }).catch((err) => {
+          console.log(err);
+          Swal.fire({ title: "<strong>Error</strong>", icon: "error", html:err.response.data,
+            showCloseButton: true, showCancelButton: true, focusConfirm: false
           });
-         
         });
     },
   },
+  mounted(){
+    this.getDistribuidoras();
+  }
 };
 </script>
 

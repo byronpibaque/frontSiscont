@@ -5,79 +5,45 @@
         <v-toolbar-title>Inventario</v-toolbar-title>
         <v-divider class="mx-2" inset vertical></v-divider>
         <v-flex>
-          <v-btn
-            color="white"
-            small
-            flat
-            style="background-color: #87d738"
-            @click="(modaltipoproducto = 1), listar_tipoproductos()"
-          >
+          <v-btn color="white" small flat style="background-color: #87d738"
+            @click="(modaltipoproducto = 1), listar_tipoproductos()">
             <v-icon>precision_manufacturing</v-icon>
             TIPOS PRODUCTOS
           </v-btn>
-          <v-btn
-            color="white"
-            small
-            flat
-            style="background-color: #d4850c"
-            @click="(modalprincipioactivo = 1), listar_principiosactivos()"
-          >
+          <v-btn color="white" small flat style="background-color: #d4850c"
+            @click="(modalprincipioactivo = 1), listar_principiosactivos()">
             <v-icon>biotech</v-icon>
             Principio Activo
           </v-btn>
-          <v-btn
-            color="white"
-            flat
-            small
+          <v-btn color="white" flat small
             style="background-color: #1aab60"
-            @click="(modalpresentacion = 1), listar_presentacion()"
-          >
+            @click="(modalpresentacion = 1), listar_presentacion()">
             <v-icon>colorize</v-icon>
             PRESENTACIÓN
           </v-btn>
-          <v-btn
-            color="white"
-            flat
-            small
-            style="background-color: #628c0e"
-            @click="(modalconcentracion = 1), listar_concentracion()"
-          >
+          <v-btn color="white" flat small style="background-color: #628c0e"
+            @click="(modalconcentracion = 1), listar_concentracion()">
             <v-icon>science</v-icon>
             CONCENTRACIÓN
           </v-btn>
-          <v-btn
-            color="white"
-            flat
-            small
-            style="background-color: #d8671e"
-            @click="
-              (modalproducto = 1),
-                ObtenerTipoProductos(),
-                ObtenerConcentraciones(),
-                ObtenerPrincipios(),
-                ObtenerPresentaciones(),
-                listar_productos()
-            "
-          >
+          <v-btn color="white" flat small style="background-color: #d8671e"
+            @click="(modalproducto = 1),ObtenerTipoProductos(),ObtenerConcentraciones(),
+                ObtenerPrincipios(),ObtenerPresentaciones(),listar_productos()">
             <v-icon>article</v-icon>
             PRODUCTOS
+          </v-btn>
+          <v-btn color="white" flat small style="background-color: #d8671e"
+            @click="getReporteExcel()">
+            <v-icon>article</v-icon>
+            Reporte
           </v-btn>
         </v-flex>
         <v-divider class="mx-2" inset vertical></v-divider>
         <v-flex>
-          <v-btn
-            color="white"
-            small
-            flat
-            class="primary"
-            @click="
-              (modalInventario = 1),
-                obetenerProveedores(),
-                obtenerFabricantes(),
-                obtenerProductos(),
-                obtenerBodega()
-            "
-          >
+          <v-btn v-show="esGuardaAlmacen"
+            color="white" small flat class="primary"
+            @click="(modalInventario = 1), obetenerProveedores(), obtenerFabricantes(),
+                obtenerProductos(), obtenerBodega()">
             <v-icon>save</v-icon>
             NUEVO
           </v-btn>
@@ -87,13 +53,12 @@
       <v-dialog v-model="modaltipoproducto" max-width="600">
         <v-card>
           <v-card-title class="headline">AGREGAR TIPO DE PRODUCTO</v-card-title>
-
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12 sm12 md12 lg12 xl12>
                   <v-text-field
-                    v-model="descripcion_tp"
+                    v-model.trim="descripcion_tp"
                     class="text-xs-center"
                     append-icon="edit"
                     label="Descripcion"
@@ -254,12 +219,10 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
-              @click="(modalprincipioactivo = 0), limpiar()"
-              color="orange darken-4"
-              flat="flat"
-              >Cerrar</v-btn
-            >
+            <v-btn @click="(modalprincipioactivo = 0), limpiar()"
+              color="orange darken-4" flat="flat">
+              Cerrar
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -362,29 +325,16 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12 sm12 md12 lg12 xl12>
-                  <v-text-field
-                    v-model="descripcion_c"
-                    class="text-xs-center"
-                    append-icon="edit"
-                    label="Descripcion"
-                  ></v-text-field>
+                  <v-text-field v-model="descripcion_c" class="text-xs-center"
+                    append-icon="edit" label="Descripcion"></v-text-field>
 
                   <v-flex xs12 sm12 md12 v-show="valida">
-                    <div
-                      class="red--text"
-                      v-for="v in validaMensaje"
-                      :key="v"
-                      v-text="v"
-                    ></div>
+                    <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v">
+                    </div>
                   </v-flex>
 
-                  <v-btn
-                    color="white"
-                    class="success"
-                    flat
-                    small
-                    @click="guardar_concentracion(descripcion_c)"
-                  >
+                  <v-btn color="white" class="success" flat small
+                    @click="guardar_concentracion(descripcion_c)">
                     <v-icon>save</v-icon>
                     GUARDAR
                   </v-btn>
@@ -492,10 +442,10 @@
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs3 sm3 md3>
-                  <v-text-field v-model="contenidoNeto" label="C. neto"></v-text-field>
+                  <v-text-field type="number" v-model="contenidoNeto" label="Contenido neto"></v-text-field>
                 </v-flex>
                 <v-flex xs2 sm2 md2>
-                  <v-text-field v-model="fraccionCaja" label="F x Caja"></v-text-field>
+                  <v-text-field type="number" v-model="fraccionCaja" label="F x Caja"></v-text-field>
                 </v-flex>
               </v-layout>
               <v-flex xs12 sm12 md12 v-show="valida">
@@ -510,6 +460,7 @@
                 <v-icon>save</v-icon>
                 GUARDAR
               </v-btn>
+
               <v-btn
                 color="white"
                 class="primary"
@@ -520,6 +471,7 @@
                 <v-icon>save</v-icon>
                 ACTUALIZAR
               </v-btn>
+
             </v-container>
             <v-flex xs12 sm12 md12 lg12 xl12>
               <v-text-field
@@ -549,9 +501,7 @@
                       >
                     </td>
                     <td class="text-xs-center blue--text">
-                      {{
-                        props.item.descripcion 
-                      }}
+                      {{ props.item.descripcion }}
                     </td>
                     <td class="text-xs-center">
                       {{ props.item.fraccionCaja }}
@@ -561,21 +511,32 @@
                     </td>
                     <td class="text-xs-center">
                       {{
-                        props.item.detalleConcentracion +
-                        props.item.codigoConcentracion.descripcion
+                        (!props.item.codigoConcentracion) ?
+                         'No Hay Descripcion' : props.item.codigoConcentracion.descripcion
                       }}
                     </td>
                     <td class="text-xs-center">
-                      {{ props.item.codigoPresentacion.descripcion }}
+                      {{ 
+                        (!props.item.codigoPresentacion) ?
+                         'No hay Descripcion' : props.item.codigoPresentacion.descripcion
+                      }}
                     </td>
                     <td class="text-xs-center" v-if="props.item.codigoPrincipioactivo">
-                      {{ props.item.codigoPrincipioactivo.descripcion }}
+                      {{ 
+                        (!props.item.codigoPrincipioactivo ) ?
+                         'No hay descripción' :
+                         props.item.codigoPrincipioactivo.descripcion
+                      }}
                     </td>
                     <td class="text-xs-center red--text" v-else>
                       NO REGISTRA PRINCIPIO ACTIVO
                     </td>
                     <td class="text-xs-center">
-                      {{ props.item.codigoTipoproducto.descripcion }}
+                      {{ 
+                        (!props.item.codigoTipoproducto) ?
+                         'No hay descripción' :
+                         props.item.codigoTipoproducto.descripcion
+                      }}
                     </td>
                   </template>
                   <template slot="no-data">
@@ -587,12 +548,10 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
-              @click="(modalproducto = 0), limpiar()"
-              color="orange darken-4"
-              flat="flat"
-              >Cerrar</v-btn
-            >
+            <v-btn @click="(modalproducto = 0), limpiar()"
+              color="orange darken-4" flat="flat">
+              Cerrar
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -600,10 +559,10 @@
       <v-dialog v-model="modalInventario" max-width="950">
         <v-card>
           <v-card-title class="headline">
-            <span v-if="banderaActualizar" class="headline">-EDITAR </span>
-            <span v-else class="headline">-AGREGAR </span>
-            - PRODUCTOS AL INVENTARIO</v-card-title
-          >
+            <span v-if="banderaActualizar" class="headline">EDITAR </span>
+            <span v-else class="headline">AGREGAR </span>
+            - PRODUCTOS AL INVENTARIO
+          </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
@@ -664,19 +623,45 @@
                   <v-text-field v-model="codigoBarra" label="Código Barra"></v-text-field>
                 </v-flex>
                 <v-flex xs3 sm3 md3>
-                  <v-text-field v-model="codigoLote"  @change="verificarLote(codigoLote)" label="Código Lote"></v-text-field>
+                  <v-text-field v-model="codigoLote"  @change="verificarLote(codigoLote)" 
+                    label="Código Lote">
+                  </v-text-field>
                 </v-flex>
                 <v-flex xs3 sm3 md3 v-if="!banderaLote">
-                  <v-text-field
+                  <!-- <v-text-field
                     v-model="fechaElaboracion"
                     label="Fecha elaboracion"
-                  ></v-text-field>
+                  ></v-text-field> -->
+                  <v-menu ref="menu" v-model="menu" :close-on-content-click="false"
+                    :nudge-right="40" :return-value.sync="fechaElaboracion" lazy
+                    transition="scale-transition" offset-y full-width min-width="290px">
+                    <template v-slot:activator="{ on }">
+                      <v-text-field v-model="fechaElaboracion" label="Fecha de Elaboración"
+                        prepend-icon="event" readonly v-on="on">
+                      </v-text-field>
+                    </template>
+                    <v-date-picker v-model="fechaElaboracion" no-title scrollable>
+                      <v-spacer></v-spacer>
+                      <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                      <v-btn flat color="primary" @click="$refs.menu.save(fechaElaboracion)">OK</v-btn>
+                    </v-date-picker>
+                  </v-menu>
                 </v-flex>
                 <v-flex xs3 sm3 md3 v-if="!banderaLote">
-                  <v-text-field
-                    v-model="fechaCaducidad"
-                    label="Fecha caducidad"
-                  ></v-text-field>
+                  <v-menu ref="menu2" v-model="menu2" :close-on-content-click="false"
+                    :nudge-right="40" :return-value.sync="fechaCaducidad" lazy
+                    transition="scale-transition" offset-y full-width min-width="290px">
+                    <template v-slot:activator="{ on }">
+                      <v-text-field v-model="fechaCaducidad" label="Fecha de Caducidad"
+                        prepend-icon="event" readonly v-on="on">
+                      </v-text-field>
+                    </template>
+                    <v-date-picker v-model="fechaCaducidad" no-title scrollable>
+                      <v-spacer></v-spacer>
+                      <v-btn flat color="primary" @click="menu2 = false">Cancel</v-btn>
+                      <v-btn flat color="primary" @click="$refs.menu2.save(fechaCaducidad)">OK</v-btn>
+                    </v-date-picker>
+                  </v-menu>
                 </v-flex>
 
                 <v-flex xs12 sm12 md12> </v-flex>
@@ -717,8 +702,11 @@
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm12 md12> </v-flex>
-                <v-flex xs2 sm2 md2>
+                <!-- <v-flex xs2 sm2 md2>
                   <v-text-field v-model="costoNeto" label="Costo Neto" v-if="!banderaLote"></v-text-field>
+                </v-flex> -->
+                <v-flex xs2 sm2 md2 v-if="!banderaLote">
+                  <v-text-field v-model="punit" label="P. unitario"></v-text-field>
                 </v-flex>
                 <v-flex xs2 sm2 md2>
                   <v-text-field v-model="pvm" label="PVM" v-if="!banderaLote"></v-text-field>
@@ -727,31 +715,24 @@
                   <v-text-field
                     v-model="pvp"
                     label="PVP"
-                    @change="calcularPunit()"
                   ></v-text-field>
                 </v-flex>
+                
                 <v-flex xs2 sm2 md2 v-if="!banderaLote">
-                  <v-text-field v-model="punit" label="P. unitario"></v-text-field>
+                  <v-text-field v-model="descuento" label="Descuento" 
+                  @change="calcularPunitDescuento()">
+                  </v-text-field>
                 </v-flex>
                 <v-flex xs2 sm2 md2 v-if="!banderaLote">
-                  <v-text-field v-model="descuento" label="Descuento"></v-text-field>
+                  <v-text-field type="number" v-model="pUDescuento" label="P. Unitario Con Descuento">
+                  </v-text-field>
                 </v-flex>
               </v-layout>
               <v-flex xs12 sm12 md12 v-show="valida">
-                <div
-                  class="red--text"
-                  v-for="v in validaMensaje"
-                  :key="v"
-                  v-text="v"
-                ></div>
+                <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
               </v-flex>
-              <v-btn
-                color="white"
-                class="success"
-                flat
-                small
-                @click="agregarAinventario()"
-              >
+              <v-btn v-show="esGuardaAlmacen" color="white" 
+                class="success" flat small @click="agregarAinventario()">
                 <v-icon>save</v-icon>
                 GUARDAR
               </v-btn>
@@ -768,42 +749,38 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
       <v-flex v-if="$store.state.usuario.codigoDistribuidor==undefined">
-         <v-flex xs4 sm4 md4 v-if="banderainsumo">
-                  <v-autocomplete
-                    v-model="codigoBodega"
-                    :items="bodegas"
-                    label="Elegir bodega"
-                    @change="listarInventario(codigoBodega)"
-                  ></v-autocomplete>
-                </v-flex>
+        <v-flex xs4 sm4 md4 v-if="banderainsumo">
+          <v-autocomplete v-model="codigoBodega" :items="bodegas" label="Elegir bodega"
+            @change="listarInventario(codigoBodega)">
+          </v-autocomplete>
+        </v-flex>
       </v-flex>
-      <v-flex xs12 xl12 sm12 s12 m12
-        ><v-text-field
-          v-model="search"
-          label="Buscar"
-          @keyup.enter="buscar(search)"
-      
-        ></v-text-field
-      ></v-flex>
+
+      <v-flex xs12 xl12 sm12 s12 m12>
+        <v-text-field v-model="search" label="Buscar" @keyup.enter="buscar(search)">
+        </v-text-field>
+      </v-flex>
+
       <!-- TABLA DE INVENTARIO -->
-      <v-data-table
-        :headers="CAB_inventario"
-        :items="ARR_inventario"
-        class="elevation-1"
-        :items-per-page="5"
-      >
+      <v-data-table :headers="CAB_inventario" :items="ARR_inventario"
+        class="elevation-1" :items-per-page="5">
         <template v-slot:items="props">
           <td>
-            <v-icon v-if="$store.state.usuario.codigoDistribuidor==undefined" small class="mr-2" @click="eliminar_inventario(props.item)"
-              >delete</v-icon
-            >
-            <v-icon small class="mr-2" @click="actualizarProductoInventario(props.item)"
-              >edit</v-icon
-            >
+            <v-icon small class="mr-2" @click="actualizarProductoInventario(props.item)">
+              edit
+            </v-icon>
+            <v-icon v-show="esGuardaAlmacen"
+              small class="mr-2" @click="eliminar_inventario(props.item)">
+              delete
+            </v-icon>
           </td>
           <td class="grey lighten-1 text-xs-center black--text">
-            {{ props.item.codigoProducto.descripcion }}
+            {{ (!props.item.codigoProducto) ? 
+                'No hay descripcion' :
+                props.item.codigoProducto.descripcion 
+            }}
           </td>
           <td class="grey text-xs-center black--text">
             {{ props.item.nombreComercial }}
@@ -816,29 +793,45 @@
           </td>
           <td  class="grey darken-2 text-xs-center white--text" v-if="props.item.registroSanitario">{{props.item.registroSanitario}}</td>
           <td v-else class="red--text">No se registra el campo REGISTRO SANITARIO</td>
-          <td class="deep-orange lighten-2">
-            {{ props.item.fraccionesTotales }}
+          <td class="deep-orange lighten-2 text-sm-center">{{ props.item.fraccionesTotales }}</td>
+          <td class="deep-orange lighten-3 text-sm-center">
+            {{ (!props.item.codigoProducto) ? 
+              'No hay codigo de producto' : 
+              props.item.codigoProducto.fraccionCaja
+            }}
           </td>
-          <td class="deep-orange lighten-3">
-            {{ props.item.codigoProducto.fraccionCaja }}
-          </td>
-          <td class="blue--text">${{ props.item.costoNeto }}</td>
+          <!-- <td class="blue--text">${{ props.item.costoNeto }}</td> -->
+          <td class="blue--text">${{ props.item.punit }}</td>
           <td class="blue--text">${{ props.item.pvm }}</td>
           <td class="blue--text">${{ props.item.pvp }}</td>
-          <td class="blue--text">${{ props.item.punit }}</td>
+          <td class="blue--text" style="text-align: center">
+            {{ ( props.item.costoNetoDescuento != 0 ) ? 
+                props.item.costoNetoDescuento : 
+                'No hay descuento'
+            }}
+          </td>
           <td class="green--text" v-if="props.item.iva">SI</td>
           <td class="orange--text" v-else>NO</td>
-          <td class="deep-purple lighten-4">
-            {{ props.item.percha }}
-          </td>
           <td class="blue lighten-5">
-            {{ props.item.numComprobante }}
+            <v-icon style="cursor: pointer" @click="detalleProducto(props.item)">
+              visibility
+            </v-icon>
           </td>
           <td class="teal lighten-1">
-            {{ props.item.codigoFabricante.razonsocial }}
+            {{ (!props.item.codigoFabricante) ? 
+              'No Hay Razon Social' : 
+              props.item.codigoFabricante.razonsocial }}
           </td>
           <td class="teal lighten-2">
-            {{ props.item.codigoProveedor.razonsocial }}
+            {{ (!props.item.codigoFabricante) ? 
+              'No Hay Razon Social' : 
+              props.item.codigoProveedor.razonsocial }}
+          </td>
+          <td class="teal lighten-2">
+            {{ (!props.item.fechaIngresoBodega) ? 
+              'No Se agrego fecha' : 
+              `${props.item.fechaIngresoBodega.split('T')[0].split('-')[2]}/${props.item.fechaIngresoBodega.split('T')[0].split('-')[1]}/${props.item.fechaIngresoBodega.split('T')[0].split('-')[0]}`              
+            }}
           </td>
         </template>
         <template slot="no-data">
@@ -846,20 +839,34 @@
         </template>
       </v-data-table>
     </v-flex>
+
+    <v-dialog v-model="verDetalle" width="800">
+      <Detalle :product="producto" />
+    </v-dialog>
+
   </v-layout>
 </template>
 
 <script>
-import moment from "moment";
 import axios from "axios";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import Swal from "sweetalert2";
+import Detalle from "./invetario/Detalle.vue";
 export default {
-  watch: {},
-  props: {},
+  name: 'inventario',
+  components: { Detalle },
+  name: 'IndexInventario',
+  computed: {
+    esGuardaAlmacen() {
+      return (this.$store.state.usuario.rol == "609ed47286d0416b4a050c58");
+    }
+  },
   data() {
     return {
+      date: new Date().toISOString().substr(0, 10),
+      menu: false,
+      menu2: false,
+      verDetalle: false,
+      producto: {},
       concentracionTXT:"",
       banderaLote:false,
       codigoBodega:"",
@@ -874,48 +881,45 @@ export default {
       ARR_tipoproducto: [],
       CAB_tipoproducto: [
         { text: "Opciones", value: "opciones", sortable: false },
-        { text: "Descripcion", value: "descripcion", sortable: true },
+        { text: "Descripcion", value: "descripcion", sortable: false },
       ],
       descripcion_pa: "",
       modalprincipioactivo: 0,
       ARR_principioactivo: [],
       CAB_principioactivo: [
         { text: "Opciones", value: "opciones", sortable: false },
-        { text: "Descripcion", value: "descripcion", sortable: true },
+        { text: "Descripcion", value: "descripcion", sortable: false },
       ],
       descripcion_p: "",
       modalpresentacion: 0,
       ARR_presentacion: [],
       CAB_presentacion: [
         { text: "Opciones", value: "opciones", sortable: false },
-        { text: "Descripcion", value: "descripcion", sortable: true },
+        { text: "Descripcion", value: "descripcion", sortable: false },
       ],
       descripcion_c: "",
       modalconcentracion: 0,
       ARR_concentracion: [],
       CAB_concentracion: [
         { text: "Opciones", value: "opciones", sortable: false },
-        { text: "Descripcion", value: "descripcion", sortable: true },
+        { text: "Descripcion", value: "descripcion", sortable: false },
       ],
       modalproducto: 0,
       ARR_producto: [],
       CAB_producto: [
         { text: "Opciones", value: "opciones", sortable: false },
-        { text: "Descripcion", value: "descripcion", sortable: true },
+        { text: "Descripcion", value: "descripcion", sortable: false },
         { text: "FxCaja", value: "fraccionCaja", sortable: false },
         { text: "Contenido Neto", value: "contenidoNeto", sortable: false },
         { text: "Concentracion", value: "detalleConcentracion", sortable: false },
-        {
-          text: "Presentacion",
-          value: "codigoPresentacion.descripcion",
-          sortable: false,
-        },
+        { text: "Presentacion", value: "codigoPresentacion.descripcion", sortable: false },
         { text: "Principio Actvo.", value: "codigoPrincipioactivo", sortable: false },
-        { text: "Tipo producto", value: "codigoTipoproducto", sortable: false },
+        { text: "Tipo producto", value: "codigoTipoproducto", sortable: false }
       ],
       descripcion_p: "",
       fraccionCaja: 0,
       contenidoNeto: "",
+      pUDescuento: 0,
       detalleConcentracion: "",
       codigoTipoproducto: "",
       tipoproductos: [],
@@ -929,46 +933,27 @@ export default {
       ARR_inventario: [],
       CAB_inventario: [
         { text: "Opciones", value: "opciones", sortable: false },
-        { text: "Producto", value: "codigoProducto.descripcion", sortable: true },
-        { text: "Nombre Comercial", value: "nombreComercial", sortable: true },
+        { text: "Producto", value: "codigoProducto.descripcion", sortable: false },
+        { text: "Nombre Comercial", value: "nombreComercial", sortable: false },
         { text: "Codigo Barra", value: "codigoBarra", sortable: false },
         { text: "Codigo Lote", value: "codigoLote", sortable: false },
-           { text: "Registro Sanitario", value: "registroSanitario", sortable: false },
-        { text: "Fracciones T.", value: "fraccionesTotales", sortable: false },
-        {
-          text: "Fracciones * C.",
-          value: "codigoProducto.fraccionCaja",
-          sortable: false,
-        },
-        {
-          text: "C. NETO",
-          value: "costoNeto",
-          sortable: false,
-        },
-        {
-          text: "PVM",
-          value: "pvm",
-          sortable: false,
-        },
-        {
-          text: "PVP",
-          value: "pvp",
-          sortable: false,
-        },
-        {
-          text: "P. Unit",
-          value: "punit",
-          sortable: false,
-        },
-         {
-          text: "IVA",
-          value: "iva",
-          sortable: false,
-        },
-        { text: "Ubicacion en percha", value: "percha", sortable: false },
-        { text: "# comprobante", value: "numComprobante", sortable: false },
+        { text: "Registro Sanitario", value: "registroSanitario", sortable: false },
+        // { text: "Total Cajas", value: "cajaTotales", sortable: false },
+        // { text: "Fracciones", value: "fracciones", sortable: false },
+        { text: "Total Unidades", value: "fraccionesTotales", sortable: false },
+        { text: "Unidades * C.", value: "codigoProducto.fraccionCaja", sortable: false },
+        // { text: "C. NETO", value: "costoNeto", sortable: false },
+        { text: "P. Unit", value: "punit", sortable: false },
+        { text: "PVM", value: "pvm", sortable: false },
+        { text: "PVP", value: "pvp", sortable: false },
+        { text: "Costo Neto con Descuento", value: "pUnitDescuento", sortable: false, align: 'center' },
+        { text: "IVA", value: "iva", sortable: false },
+        // { text: "Ubicacion en percha", value: "percha", sortable: false },
+        // { text: "# comprobante", value: "numComprobante", sortable: false },
+        { text: "Detalle", value: "detalle", sortable: false },
         { text: "Lab. Fab.", value: "codigoFabricante.razonsocial", sortable: false },
         { text: "Proveedor", value: "codigoProveedor.razonsocial", sortable: false },
+        { text: "Fecha de Ingreso", value: "fechaIngresoBodega", sortable: false }
       ],
       modalInventario: 0,
       codigoBarra: "",
@@ -976,8 +961,8 @@ export default {
       nombreComercial: "",
       registroSanitario:"",
       fraccionesTotales: 0,
-      fechaCaducidad: "",
-      fechaElaboracion: "",
+      fechaCaducidad: new Date().toISOString().substr(0, 10),
+      fechaElaboracion: new Date().toISOString().substr(0, 10),
       iva: 0,
       ivas: [
         { text: "SI", value: 1 },
@@ -1000,6 +985,7 @@ export default {
       fcajaP: 0,
       presentacionP: "",
       concentracionP: "",
+      detallesExcel: []
     };
   },
   created() {
@@ -1007,30 +993,43 @@ export default {
     this.obtenerBodegas();
   },
   methods: {
+    async getReporteExcel(){
+      let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
+      if(codigoDistribuidor != undefined){
+        const resCode = this.obtenerBodega2();
+        resCode.then((result) => {
+          axios.post("inventario/reporte", { codigoBodega: result }, {responseType: 'blob'}).then(function (response) {
+            var oMyBlob = new Blob([response.data], {type : 'application/vnd.ms-excel'}); 
+            var url = URL.createObjectURL(oMyBlob);
+            window.open(url);
+          })
+        })
+      }
+    },
+    detalleProducto( producto ){
+      this.producto = producto;
+      this.verDetalle = true;
+    },
     verificarLote(codigoLote){
       let me = this;
      
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-      let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
-      let codigoUsuario = this.$store.state.usuario._id;
+      // let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
+      // let codigoUsuario = this.$store.state.usuario._id;
       const resCode = this.obtenerBodega2();
       resCode
         .then((result) => {
-          axios
-            .get(
-              "inventario/queryV?codigoLote=" + codigoLote + "&codigoBodega=" + result,
+          axios.get("inventario/queryV?codigoLote=" + codigoLote + "&codigoBodega=" + result,
               configuracion
-            )
-            .then(function (response) {
+            ).then(function (response) {
               if (response.status == 200) {
                 Swal.fire("Aviso", "Ya existe un producto con el codigo de lote: "+codigoLote+" registrado en la base de datos.", "error");
                 me.banderaLote=true
-             } else{
-               me.banderaLote=false
-             }
-            })
-            .catch(function (error) {
+             } 
+             else
+               me.banderaLote = false             
+            }).catch(function (error) {
               console.log(error);
             });
         })
@@ -1080,8 +1079,8 @@ export default {
       me.ARR_inventario = [];
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-      let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
-      let codigoUsuario = this.$store.state.usuario._id;
+      // let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
+      // let codigoUsuario = this.$store.state.usuario._id;
       const resCode = this.obtenerBodega2();
       resCode
         .then((result) => {
@@ -1106,34 +1105,40 @@ export default {
         });
     },
     calcularPunit() {
-      this.punit = (parseFloat(this.pvp) / parseInt(this.fcajaP)).toFixed(5);
+      this.punit = (parseFloat(this.costoNeto) / parseInt(this.fcajaP)).toFixed(5);
     },
-
+    calcularPunitDescuento() {
+      if (this.descuento == 0) this.pUDescuento = 0
+      else
+        this.pUDescuento = (this.punit - ((parseFloat(this.punit) * this.descuento) / 100)).toFixed(4);
+    },
     eliminar_inventario(item) {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-      axios
-        .delete("inventario/remove?_id=" + item._id, configuracion)
-        .then(function (response) {
-          if (response.status == 200) {
-            Swal.fire(
-              "Noticias!",
-              "Se elimino correctamente el tipo de producto.",
-              "success"
-            );
-          } else {
-            Swal.fire(
-              "Ops!",
-              "Hubo problemas al intentar eliminar el tipo de producto",
-              "err"
-            );
-          }
-          me.listarProductosInventario();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+
+      Swal.fire({
+        title: 'Estas seguro de eliminar este producto del Inventario?',
+        text: "Una vez eliminado no podra recuperarse...!",
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar',
+        denyButtonText: `Cancelar`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios.delete("inventario/remove?_id=" + item._id, configuracion)
+            .then(function (response) {
+              if (response.status == 200) 
+                Swal.fire("Noticias!","Se elimino correctamente el tipo de producto.","success");
+              else
+                Swal.fire("Ops!","Hubo problemas al intentar eliminar el tipo de producto","err");
+              
+              me.listarProductosInventario();
+            }).catch(function (error) {
+              console.log(error);
+            });
+        }
+      })
     },
     obtenerProductoInfo(codigoProducto) {
       let me = this;
@@ -1164,7 +1169,8 @@ export default {
       this.nombreComercial = item.nombreComercial;
       this.registroSanitario=item.registroSanitario;
       this.fraccionesTotales = item.fraccionesTotales;
-      this.fechaCaducidad = item.fechaCaducidad;
+      this.fechaCaducidad = item.fechaCaducidad.split('T')[0];
+      this.fechaElaboracion = item.fechaElaboracion.split('T')[0];
       this.iva = item.iva;
       this.descuento = item.descuento;
       this.pvp = item.pvp;
@@ -1176,7 +1182,6 @@ export default {
       this.codigoProveedor = item.codigoProveedor._id;
       this.codigoProducto = item.codigoProducto._id;
       this.obtenerProductoInfo(item.codigoProducto._id);
-      this.fechaElaboracion = item.fechaElaboracion;
       this.modalInventario = 1;
     },
     async obtenerBodega2() {
@@ -1196,24 +1201,27 @@ export default {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-       let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
-      if(codigoDistribuidor!=undefined){
-      const resCode = this.obtenerBodega2();
-      resCode
-        .then((result) => {
-          axios
-            .get("inventario/list?codigoBodega=" + result, configuracion)
-            .then(function (response) {
-              me.ARR_inventario = response.data;
+      let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
+      if(codigoDistribuidor != undefined){
+        const resCode = this.obtenerBodega2();
+        resCode.then((result) => {
+          axios.get("inventario/list?codigoBodega=" + result, configuracion).then(function ({ data }) {
+            data.map( inventario => {
+              let cajaTotales = parseInt( inventario.fraccionesTotales / inventario.codigoProducto.fraccionCaja );
+              let fracciones = inventario.fraccionesTotales % inventario.codigoProducto.fraccionCaja;
+
+              inventario.cajaTotales = cajaTotales
+              inventario.fracciones = fracciones
             })
-            .catch(function (error) {
-              console.log(error);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
+            me.ARR_inventario = data;
+
+          }).catch(function (error) {
+            console.log(error);
+          });
+        }).catch((err) => {
+            console.log(err);
         });
-        }
+      }
     },
     limpiarInventario() {
       this.idInventarioActualizar = "";
@@ -1241,7 +1249,7 @@ export default {
       this.presentacionP=""
       this.percha=""
 
-},
+    },
     validar_inventario() {
       this.valida = 0;
       this.validaMensaje = [];
@@ -1278,9 +1286,9 @@ export default {
       if (this.fechaElaboracion.length == 0) {
         this.validaMensaje.push("FECHA ELABORACION no puede estar vacío.");
       }
-      if (this.codigoBarra.length == 0) {
-        this.validaMensaje.push("Debe ingresar el codigo de barras.");
-      }
+      // if (this.codigoBarra.length == 0) {
+      //   this.validaMensaje.push("Debe ingresar el codigo de barras.");
+      // }
       if (this.codigoLote.length == 0) {
         this.validaMensaje.push("Debe ingresar el codigo de lote.");
       }
@@ -1314,79 +1322,59 @@ export default {
 
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-      if (this.validar_inventario()) {
-        return;
-      }
+
+      if (this.validar_inventario()) return;
+
       const respuesta = this.obtenerBodega2();
-         let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
+      let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
       let codigoBB=""
-              respuesta
-        .then((result) => {
-          if(codigoDistribuidor!=undefined){
+
+      respuesta.then((result) => {
+          if(codigoDistribuidor != undefined)
             codigoBB=result
-          }else{
+          else
             codigoBB=me.codigoBodega
-          }
    
           let nombre = this.nombreComercial;
           let rsani=this.registroSanitario;
           let codi = this.codigoLote;
           if (this.banderaActualizar) {
-            axios
-              .put(
-                "inventario/actualizar",
-                {
-                  _id: this.idInventarioActualizar,
-                  codigoBarra: this.codigoBarra,
-                  codigoLote: codi.toUpperCase(),
-                  nombreComercial: nombre.toUpperCase(),
-                  registroSanitario:rsani.toUpperCase(),
-                  fraccionesTotales: this.fraccionesTotales,
-                  fechaCaducidad: this.fechaCaducidad,
-                  fechaElaboracion: this.fechaElaboracion,
-                  iva: this.iva,
-                  descuento: this.descuento,
-                  pvp: this.pvp,
-                  pvm: this.pvm,
-                  punit: this.punit,
-                  costoNeto: this.costoNeto,
-                  codigoUsuario: this.$store.state.usuario._id,
-                  codigoBodega: codigoBB,
-                  codigoFabricante: this.codigoFabricante,
-                  codigoProveedor: this.codigoProveedor,
-                  codigoProducto: this.codigoProducto,
-                },
-                configuracion
-              )
-              .then(function (response) {
-                if (response.status == 200) {
-                  Swal.fire(
-                    "Noticias!",
-                    "Se actualizó correctamente el producto.",
-                    "success"
-                  );
-                   me.listarInventario(codigoBB)
-                  me.limpiarInventario();
-                  me.modalInventario = 0;
-                 
-                } else {
-                  Swal.fire(
-                    "Ops!",
-                    "Hubo problemas al intentar actualizar el producto",
-                    "err"
-                  );
-                }
-
-                me.listarProductosInventario();
-              })
-              .catch(function (error) {
-                console.log(error);
-              });
+            axios.put("inventario/actualizar",{
+              _id: this.idInventarioActualizar,
+              codigoBarra: this.codigoBarra,
+              codigoLote: codi.toUpperCase(),
+              nombreComercial: nombre.toUpperCase(),
+              registroSanitario:rsani.toUpperCase(),
+              fraccionesTotales: this.fraccionesTotales,
+              fechaCaducidad: this.fechaCaducidad,
+              fechaElaboracion: this.fechaElaboracion,
+              iva: this.iva,
+              descuento: this.descuento,
+              pvp: this.pvp,
+              pvm: this.pvm,
+              punit: this.punit,
+              costoNeto: this.costoNeto,
+              costoNetoDescuento: this.pUDescuento,
+              codigoUsuario: this.$store.state.usuario._id,
+              codigoBodega: codigoBB,
+              codigoFabricante: this.codigoFabricante,
+              codigoProveedor: this.codigoProveedor,
+              codigoProducto: this.codigoProducto
+            }, configuracion).then(function (response) {
+              if (response.status == 200) {
+                Swal.fire( "Noticias!", "Se actualizó correctamente el producto.", "success");
+                me.listarInventario(codigoBB)
+                me.limpiarInventario();
+                me.modalInventario = 0;
+              } else {
+                Swal.fire("Ops!", "Hubo problemas al intentar actualizar el producto", "err");
+              }
+              me.listarProductosInventario();
+            }).catch(function (error) {
+              console.log(error);
+            });
           } else {
-            axios
-              .post(
-                "inventario/add",
-                {
+            axios.post("inventario/add", {
                   codigoBarra: this.codigoBarra,
                   codigoLote: codi.toUpperCase(),
                   nombreComercial: nombre.toUpperCase(),
@@ -1400,29 +1388,19 @@ export default {
                   pvm: this.pvm,
                   punit: this.punit,
                   costoNeto: this.costoNeto,
+                  costoNetoDescuento: this.pUDescuento,
                   codigoUsuario: this.$store.state.usuario._id,
                   codigoBodega: codigoBB,
                   codigoFabricante: this.codigoFabricante,
                   codigoProveedor: this.codigoProveedor,
                   codigoProducto: this.codigoProducto,
-                },
-                configuracion
-              )
-              .then(function (response) {
+                }, configuracion).then(function (response) {
                 if (response.status == 200) {
-                  Swal.fire(
-                    "Noticias!",
-                    "Se agregao correctamente al inventario.",
-                    "success"
-                  );
+                  Swal.fire("Noticias!","Se agregao correctamente al inventario.","success");
                   me.limpiarInventario();
                   me.modalInventario = 0;
                 } else {
-                  Swal.fire(
-                    "Ops!",
-                    "Hubo problemas al intentar guardar el producto",
-                    "err"
-                  );
+                  Swal.fire("Ops!","Hubo problemas al intentar guardar el producto","err");
                 }
                 me.listarProductosInventario();
               })
@@ -1510,27 +1488,30 @@ export default {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-      axios
-        .delete("producto/remove?_id=" + item._id, configuracion)
-        .then(function (response) {
-          if (response.status == 200) {
-            Swal.fire(
-              "Noticias!",
-              "Se elimino correctamente el tipo de producto.",
-              "success"
-            );
-          } else {
-            Swal.fire(
-              "Ops!",
-              "Hubo problemas al intentar eliminar el tipo de producto",
-              "err"
-            );
-          }
-          me.listar_productos();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+
+      Swal.fire({
+        title: 'Estas seguro de eliminar este producto?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar',
+        denyButtonText: `Cancelar`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios.delete("producto/remove?_id=" + item._id, configuracion)
+            .then(function (response) {
+              if (response.status == 200) 
+                Swal.fire("Noticias!","Se elimino correctamente el tipo de producto.","success");
+              else
+                Swal.fire("Ops!","Hubo problemas al intentar eliminar el tipo de producto","err");
+              
+              me.listar_productos();
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+      })
+
     },
     cargardatosActualizar(item) {
       this.limpiarproductos();
@@ -1624,8 +1605,7 @@ export default {
       this.codigoConcentracion = "";
       this.banderainsumo = true;
     },
-
-      async ConsultaConcentracion(codigo) {
+    async ConsultaConcentracion(codigo) {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
@@ -1638,30 +1618,26 @@ export default {
       return response.data.descripcion;
     },
     guardarProducto() {
+      if (this.validar_guardar()) return;
+
       let me = this;
       const dataC = this.ConsultaConcentracion(me.codigoConcentracion)
       let datass = ""
       dataC.then((result) => {
-        datass=result
-     
+        datass=result     
+        
+        let header = { Token: this.$store.state.token };
+        let configuracion = { headers: header };
 
-      let header = { Token: this.$store.state.token };
-      let configuracion = { headers: header };
-      if (this.validar_guardar()) {
-        return;
-      }
-      let codigoPrincipioAc;
-      if (this.banderainsumo) {
-        codigoPrincipioAc = this.codigoPrincipioactivo;
-      } else {
-        codigoPrincipioAc = undefined;
-      }
 
-      let descripcion = this.descripcion_p;
-      axios
-        .post(
-          "producto/add",
-          {
+        let codigoPrincipioAc;
+        if (this.banderainsumo)
+          codigoPrincipioAc = this.codigoPrincipioactivo;
+        else 
+          codigoPrincipioAc = undefined;
+
+        let descripcion = this.descripcion_p;
+        axios.post("producto/add",{
             descripcion: descripcion.toUpperCase()+' '+this.detalleConcentracion+datass,
             fraccionCaja: this.fraccionCaja,
             contenidoNeto: this.contenidoNeto,
@@ -1671,10 +1647,7 @@ export default {
             codigoPresentacion: this.codigoPresentacion,
             codigoConcentracion: this.codigoConcentracion,
             codigoUsuario: this.$store.state.usuario._id,
-          },
-          configuracion
-        )
-        .then(function (response) {
+          }, configuracion).then(function (response) {
           if (response.status == 200) {
             Swal.fire("Noticias!", "Se guardo correctamente el  producto.", "success");
             me.limpiarproductos();
@@ -1682,38 +1655,43 @@ export default {
             Swal.fire("Ops!", "Hubo problemas al intentar guardar el producto", "err");
           }
           me.listar_productos();
-        })
-        .catch(function (error) {
+        }).catch(function (error) {
           console.log(error);
         });
-         })
+      })
     },
     validar_guardar() {
       this.valida = 0;
       this.validaMensaje = [];
       if (isNaN(this.fraccionCaja)) {
-        this.validaMensaje.push("Fraccion x caja debe ser solo numero.");
+        this.validaMensaje.push("Unidades x caja debe ser solo numero.");
+      }
+      if (this.fraccionCaja < 1) {
+        this.validaMensaje.push("Ingresa la fraccion por caja");
       }
       if (this.descripcion_p.length == 0) {
         this.validaMensaje.push("Debe ingresar la descripcion.");
       }
-      if (this.contenidoNeto.length == 0) {
-        this.validaMensaje.push("Debe ingresar el contenido neto.");
-      }
-      if (this.detalleConcentracion.length == 0) {
-        this.validaMensaje.push(
-          "Debe ingresar el detalle de la concentracion. Ej 500,30."
-        );
-      }
-      if (this.codigoTipoproducto == "") {
-        this.validaMensaje.push("Debe escoger un tipo de producto.");
-      }
-      if (this.codigoPresentacion == "") {
-        this.validaMensaje.push("Debe escoger un tipo de presentacion.");
-      }
-      if (this.codigoConcentracion == "") {
-        this.validaMensaje.push("Debe escoger una concentracion.");
-      }
+      // if (this.contenidoNeto.length == 0) {
+      //   this.validaMensaje.push("Debe ingresar el contenido neto.");
+      // }
+      // if (this.contenidoNeto <= 0) {
+      //   this.validaMensaje.push("Ingresa el valor contenido neto");
+      // }
+      // if (this.detalleConcentracion.length == 0) {
+      //   this.validaMensaje.push(
+      //     "Debe ingresar el detalle de la concentracion. Ej 500,30."
+      //   );
+      // }
+      // if (this.codigoTipoproducto == "") {
+      //   this.validaMensaje.push("Debe escoger un tipo de producto.");
+      // }
+      // if (this.codigoPresentacion == "") {
+      //   this.validaMensaje.push("Debe escoger un tipo de presentacion.");
+      // }
+      // if (this.codigoConcentracion == "") {
+      //   this.validaMensaje.push("Debe escoger una concentracion.");
+      // }
 
       if (this.validaMensaje.length) {
         this.valida = 1;
@@ -1802,26 +1780,22 @@ export default {
         });
     },
     actualizar_concentracion(item) {
+      if (this.validarc()) return;
       let me = this;
-      let header = { Token: this.$store.state.token };
-      let configuracion = { headers: header };
       let codigoUsuario = this.$store.state.usuario._id;
       axios
         .put("concentracion/actualizar", {
           _id: item._id,
-          descripcion: me.descripcion_c(),
+          descripcion: me.descripcion_c.toUpperCase(),
           codigoUsuario: codigoUsuario,
         })
         .then(function (response) {
-          if (response.status == 200) {
-            Swal.fire(
-              "Noticias!",
-              "Se actualizo correctamente el tipo de producto.",
-              "success"
-            );
-          } else {
+          if (response.status == 200) 
+            Swal.fire("Noticias!","Se actualizo correctamente el tipo de producto.","success");
+          else 
             Swal.fire("Ops!", "Hubo problemas al intentar actualizar el ingreso", "err");
-          }
+
+          me.descripcion_c = '';
           me.listar_concentracion();
         })
         .catch(function (error) {
@@ -1832,40 +1806,38 @@ export default {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-      axios
-        .delete("concentracion/remove?_id=" + item._id, configuracion)
-        .then(function (response) {
-          if (response.status == 200) {
-            Swal.fire(
-              "Noticias!",
-              "Se elimino correctamente el tipo de producto.",
-              "success"
-            );
-          } else {
-            Swal.fire(
-              "Ops!",
-              "Hubo problemas al intentar eliminar el tipo de producto",
-              "err"
-            );
-          }
-          me.listar_concentracion();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+
+      Swal.fire({
+        title: 'Estas seguro de eliminar esta concentración?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar',
+        denyButtonText: `Cancelar`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios.delete("concentracion/remove?_id=" + item._id, configuracion)
+            .then(function (response) {
+              if (response.status == 200) 
+                Swal.fire("Noticias!","Se elimino correctamente el tipo de producto.","success");
+              else 
+                Swal.fire("Ops!","Hubo problemas al intentar eliminar el tipo de producto","err");
+              
+              me.listar_concentracion();
+            }).catch(function (error) {
+              console.log(error);
+            });
+        }
+      })
+
     },
     guardar_concentracion(descripcion) {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-      if (this.validarc()) {
-        return;
-      }
-
+      if (this.validarc()) return;
       axios
         .post(
-          "concentracion/add",
-          {
+          "concentracion/add", {
             descripcion: descripcion.toUpperCase(),
             codigoUsuario: this.$store.state.usuario._id,
           },
@@ -1873,18 +1845,11 @@ export default {
         )
         .then(function (response) {
           if (response.status == 200) {
-            Swal.fire(
-              "Noticias!",
-              "Se guardo correctamente el tipo de producto.",
-              "success"
-            );
+            Swal.fire("Noticias!","Se guardo correctamente el tipo de producto.","success");
           } else {
-            Swal.fire(
-              "Ops!",
-              "Hubo problemas al intentar guardar el tipo de producto",
-              "err"
-            );
+            Swal.fire("Ops!","Hubo problemas al intentar guardar el tipo de producto","err");
           }
+          me.descripcion_c = ''
           me.listar_concentracion();
         })
         .catch(function (error) {
@@ -1899,8 +1864,7 @@ export default {
         .get("concentracion/list", configuracion)
         .then(function (response) {
           me.ARR_concentracion = response.data;
-        })
-        .catch(function (error) {
+        }).catch(function (error) {
           console.log(error);
         });
     },
@@ -1919,13 +1883,12 @@ export default {
     },
     actualizar_presentacion(item) {
       let me = this;
-      let header = { Token: this.$store.state.token };
-      let configuracion = { headers: header };
       let codigoUsuario = this.$store.state.usuario._id;
+      if (this.validarp()) return;
       axios
         .put("presentacion/actualizar", {
           _id: item._id,
-          descripcion: me.descripcion_p,
+          descripcion: me.descripcion_p.toUpperCase(),
           codigoUsuario: codigoUsuario,
         })
         .then(function (response) {
@@ -1948,62 +1911,48 @@ export default {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-      axios
-        .delete("presentacion/remove?_id=" + item._id, configuracion)
-        .then(function (response) {
-          if (response.status == 200) {
-            Swal.fire(
-              "Noticias!",
-              "Se elimino correctamente el tipo de producto.",
-              "success"
-            );
-          } else {
-            Swal.fire(
-              "Ops!",
-              "Hubo problemas al intentar eliminar el tipo de producto",
-              "err"
-            );
-          }
-          me.listar_presentacion();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+
+      Swal.fire({
+        title: 'Estas seguro de eliminar este principio activo?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar',
+        denyButtonText: `Cancelar`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios
+            .delete("presentacion/remove?_id=" + item._id, configuracion)
+            .then(function (response) {
+              if (response.status == 200) {
+                Swal.fire("Noticias!","Se elimino correctamente el tipo de producto.","success");
+              } else {
+                Swal.fire("Ops!","Hubo problemas al intentar eliminar el tipo de producto","err");
+              }
+              me.listar_presentacion();
+            }).catch(function (error) {
+              console.log(error);
+            });
+        }
+      })
     },
     guardar_presentacion(descripcion) {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-      if (this.validarp()) {
-        return;
-      }
-
-      axios
-        .post(
-          "presentacion/add",
-          {
+      if (this.validarp()) return;
+      axios.post("presentacion/add",{
             descripcion: descripcion.toUpperCase(),
             codigoUsuario: this.$store.state.usuario._id,
-          },
-          configuracion
-        )
-        .then(function (response) {
+          }, configuracion
+      ).then(function (response) {
           if (response.status == 200) {
-            Swal.fire(
-              "Noticias!",
-              "Se guardo correctamente el tipo de producto.",
-              "success"
-            );
+            Swal.fire("Noticias!","Se guardo correctamente el tipo de producto.","success");
           } else {
-            Swal.fire(
-              "Ops!",
-              "Hubo problemas al intentar guardar el tipo de producto",
-              "err"
-            );
+            Swal.fire("Ops!","Hubo problemas al intentar guardar el tipo de producto","err");
           }
+          me.descripcion_p = ''
           me.listar_presentacion();
-        })
-        .catch(function (error) {
+        }).catch(function (error) {
           console.log(error);
         });
     },
@@ -2035,25 +1984,23 @@ export default {
     },
     actualizar_principiosactivos(item) {
       let me = this;
-      let header = { Token: this.$store.state.token };
-      let configuracion = { headers: header };
+      if (this.validarpa()) return; 
       let codigoUsuario = this.$store.state.usuario._id;
       axios
         .put("principioactivo/actualizar", {
           _id: item._id,
-          descripcion: me.descripcion_pa,
+          descripcion: me.descripcion_pa.toUpperCase(),
           codigoUsuario: codigoUsuario,
         })
         .then(function (response) {
           if (response.status == 200) {
-            Swal.fire(
-              "Noticias!",
-              "Se actualizo correctamente el tipo de producto.",
+            Swal.fire( "Noticias!", "Se actualizo correctamente el tipo de producto.",
               "success"
             );
           } else {
             Swal.fire("Ops!", "Hubo problemas al intentar actualizar el ingreso", "err");
           }
+          me.descripcion_pa = ''
           me.listar_principiosactivos();
         })
         .catch(function (error) {
@@ -2064,36 +2011,34 @@ export default {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-      axios
-        .delete("principioactivo/remove?_id=" + item._id, configuracion)
-        .then(function (response) {
-          if (response.status == 200) {
-            Swal.fire(
-              "Noticias!",
-              "Se elimino correctamente el tipo de producto.",
-              "success"
-            );
-          } else {
-            Swal.fire(
-              "Ops!",
-              "Hubo problemas al intentar eliminar el tipo de producto",
-              "err"
-            );
-          }
-          me.listar_principiosactivos();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+
+      Swal.fire({
+        title: 'Estas seguro de eliminar este principio activo?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar',
+        denyButtonText: `Cancelar`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios.delete("principioactivo/remove?_id=" + item._id, configuracion)
+            .then(function (response) {
+              if (response.status == 200) {
+                Swal.fire( "Noticias!", "Se elimino correctamente el tipo de producto.", "success");
+              } else {
+                Swal.fire("Ops!","Hubo problemas al intentar eliminar el tipo de producto","err");
+              }
+              me.listar_principiosactivos();
+            }).catch(function (error) {
+              console.log(error);
+            });
+        }
+      })
     },
     guardar_principiosactivos(descripcion) {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-      if (this.validarpa()) {
-        return;
-      }
-
+      if (this.validarpa()) return; 
       axios
         .post(
           "principioactivo/add",
@@ -2117,6 +2062,7 @@ export default {
               "err"
             );
           }
+          me.descripcion_pa = ''
           me.listar_principiosactivos();
         })
         .catch(function (error) {
@@ -2151,25 +2097,21 @@ export default {
     },
     actualizar_tipoproductos(item) {
       let me = this;
-      let header = { Token: this.$store.state.token };
-      let configuracion = { headers: header };
       let codigoUsuario = this.$store.state.usuario._id;
+      if (this.validar()) return;
       axios
         .put("tipoproducto/actualizar", {
           _id: item._id,
-          descripcion: me.descripcion_tp,
+          descripcion: me.descripcion_tp.toUpperCase(),
           codigoUsuario: codigoUsuario,
         })
         .then(function (response) {
           if (response.status == 200) {
-            Swal.fire(
-              "Noticias!",
-              "Se actualizo correctamente el tipo de producto.",
-              "success"
-            );
+            Swal.fire("Noticias!","Se actualizo correctamente el tipo de producto.","success");
           } else {
             Swal.fire("Ops!", "Hubo problemas al intentar actualizar el ingreso", "err");
           }
+          me.descripcion_tp = ''
           me.listar_tipoproductos();
         })
         .catch(function (error) {
@@ -2180,35 +2122,37 @@ export default {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-      axios
-        .delete("tipoproducto/remove?_id=" + item._id, configuracion)
-        .then(function (response) {
-          if (response.status == 200) {
-            Swal.fire(
-              "Noticias!",
-              "Se elimino correctamente el tipo de producto.",
-              "success"
-            );
-          } else {
-            Swal.fire(
-              "Ops!",
-              "Hubo problemas al intentar eliminar el tipo de producto",
-              "err"
-            );
-          }
-          me.listar_tipoproductos();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      Swal.fire({
+        title: 'Estas seguro de eliminar este tipo de producto?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButton: 'btn btn-success',
+        confirmButtonText: 'Eliminar',
+        denyButtonText: `Cancelar`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios
+            .delete("tipoproducto/remove?_id=" + item._id, configuracion)
+            .then(function (response) {
+              if (response.status == 200) {
+                Swal.fire("Noticias!", "Se elimino correctamente el tipo de producto.", "success");
+              } else {
+                Swal.fire("Ops!", "Hubo problemas al intentar eliminar el tipo de producto","err");
+              }
+              me.listar_tipoproductos();
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+      })
+
     },
     guardar_tipoproductos(descripcion) {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-      if (this.validar()) {
-        return;
-      }
+      if (this.validar()) return;
 
       axios
         .post(
@@ -2233,6 +2177,7 @@ export default {
               "err"
             );
           }
+          me.descripcion_tp = ''
           me.listar_tipoproductos();
         })
         .catch(function (error) {
@@ -2275,7 +2220,7 @@ export default {
       this.descripcion_c = "";
       this.ARR_concentracion = [];
       this.search = "";
-    },
+    }
   },
 };
 </script>

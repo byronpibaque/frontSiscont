@@ -5,102 +5,84 @@
         <v-toolbar-title>Egresos</v-toolbar-title>
         <v-divider class="mx-2" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <v-text-field
-          class="text-xs-center"
-          v-model="search"
-          append-icon="search"
-          label="Búsqueda"
-          single-line
-          hide-details
-        ></v-text-field>
+        <v-text-field class="text-xs-center" v-model="search" append-icon="search"
+          label="Búsqueda" single-line hide-details>
+        </v-text-field>
         <v-spacer></v-spacer>
         <template>
-          <v-btn color="primary" dark class="mb-2" @click="verNuevo = 1" v-if="!verNuevo"
-            >Nuevo</v-btn
-          >
+          <v-btn v-show="esGuardaAlmacen" color="primary" 
+            dark class="mb-2" @click="verNuevo = 1" v-if="!verNuevo">
+            Nuevo
+          </v-btn>
         </template>
       </v-toolbar>
       <v-flex xs12 sm12 md12 lg12 xl12>
         <v-container grid-list-sm class="pa-4 white" v-if="verNuevo">
           <v-layout row wrap>
             <v-flex xs12 sm2 md2 lg2 xl2>
-              <v-text-field
-                v-model="numComprobante"
-                label="Número Comprobante"
-               
-              ></v-text-field>
+              <v-text-field v-model="numComprobante" label="Número Comprobante">
+              </v-text-field>
             </v-flex>
          
-             <v-flex xs12 sm3 md3>
-                        <v-dialog
-                          ref="dialog2"
-                          v-model="modal5"
-                          :return-value.sync="fechaFactura"
-                          persistent
-                          width="290px"
-                        >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-text-field
-                                v-model="fechaFactura"
-                                label="Fecha de factura"
-                                prepend-icon="event"
-                                readonly
-                                v-bind="attrs"
-                                v-on="on"
-                              ></v-text-field>
-                            </template>
-                            <v-date-picker v-model="fechaFactura" scrollable>
-                              <v-spacer></v-spacer>
-                              <v-btn text color="primary" @click="modal5 = false">Cancelar</v-btn>
-                              <v-btn
-                                text
-                                color="success"
-                                @click="$refs.dialog2.save(fechaFactura)"
-                              >Aceptar</v-btn>
-                            </v-date-picker>
-                          </v-dialog>
-                      </v-flex>
-            <v-flex xs12 sm12 md12 lg12 xl12>
-              <v-textarea
-                v-model="descripcion"
-                label="Descripcion del egreso"
-              ></v-textarea>
+            <v-flex xs12 sm3 md3>
+                <v-dialog ref="dialog2" v-model="modal5" :return-value.sync="fechaFactura"
+                  persistent width="290px">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field v-model="fechaFactura" label="Fecha de factura" prepend-icon="event" readonly v-bind="attrs" v-on="on">
+                    </v-text-field>
+                    </template>
+                    <v-date-picker v-model="fechaFactura" scrollable>
+                      <v-spacer></v-spacer>
+                      <v-btn text color="primary" @click="modal5 = false">Cancelar</v-btn>
+                      <v-btn text color="success" @click="$refs.dialog2.save(fechaFactura)">
+                        Aceptar
+                      </v-btn>
+                    </v-date-picker>
+                </v-dialog>
             </v-flex>
-             <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
+            <v-flex xs12 sm12 md12 lg12 xl12>
+              <v-textarea v-model="descripcion" label="Descripcion del egreso">
+              </v-textarea>
+            </v-flex>
+            <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
             <span>Datos de cliente</span>
-             <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
-            <v-flex xs12 sm3 md3 lg3 xl3>
-              <v-text-field
-                v-model="doc_cliente"
-                label="Num documento"
-                @keyup.enter="buscarCliente(doc_cliente)"
-              ></v-text-field>
+            <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
+
+            <v-flex xs12 sm5 md5 lg5 xl5>
+              <v-autocomplete v-model="clienteSelected" :disabled="isUpdating" :items="listClientes"                chips color="blue-grey lighten-2" label="Seleccionar Cliente" 
+                item-text="[nombres]" item-value="[nombres]" dense>
+                <template v-slot:selection="data">
+                  <v-chip :selected="data.selected" close @input="clienteSelected = []">
+                    {{ data.item.nombres }}
+                  </v-chip>
+                </template>
+                <template v-slot:item="data">
+                  <template>
+                    <v-list-tile-content>
+                      <v-list-tile-title v-html="data.item.nombres"></v-list-tile-title>
+                    </v-list-tile-content>
+                  </template>
+                </template>
+              </v-autocomplete>
             </v-flex>
 
-            <v-flex xs12 sm3 md3 lg3 xl3>
-              <v-text-field
-                v-model="nombres_Cliente"
-                label="Nombres"
-                disabled
-              ></v-text-field>
+            <v-flex xs12 sm2 md2 lg2 xl2 style="margin-top: 11px">
+              <v-text-field v-model="doc_cliente" label="Num documento"
+                @keyup.enter="buscarCliente(doc_cliente)">
+              </v-text-field>
             </v-flex>
-            <v-flex xs12 sm3 md3 lg3 xl3>
-              <v-text-field
-                v-model="direccion_Cliente"
-                label="Direccion"
-                disabled
-              ></v-text-field>
+
+            <v-flex xs12 sm5 md5 lg5 xl5 style="margin-top: 11px">
+              <v-text-field v-model="direccion_Cliente" label="Direccion" disabled>
+              </v-text-field>
             </v-flex>
            
             <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
             <span>Datos de productos</span>
              <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
             <v-flex xs12 sm8 md8 lg8 x8>
-              <v-text-field
-                v-model="codigo"
-                label="Código"
-                @keyup.enter="buscarCodigo(codigo)"
-              ></v-text-field>
+              <v-text-field v-model="codigo" label="Código" @keyup.enter="buscarCodigo(codigo)">
+              </v-text-field>
             </v-flex>
             <v-flex xs12 sm2 md2 lg2 xl2>
               <v-btn small fab dark color="teal" @click="dialog = 1">
@@ -112,20 +94,13 @@
             </v-flex>
             <v-flex xs12 sm12 md12 lg12 xl12>
               <template>
-                <v-data-table
-                  :headers="cabeceraDetalles"
-                  :items="detalles"
-                  hide-actions
-                  class="elevation-1"
-                >
+                <v-data-table :headers="cabeceraDetalles" :items="detalles" hide-actions
+                  class="elevation-1">
                   <template slot="items" slot-scope="props">
                     <td>
-                      <v-icon
-                        small
-                        class="mr-2"
-                        @click="eliminarDetalle(detalles, props.item)"
-                        >delete</v-icon
-                      >
+                      <v-icon small class="mr-2" @click="eliminarDetalle(detalles, props.item)">
+                        delete
+                      </v-icon>
                     </td>
                     <td class="text-xs-center blue--text">
                       {{ props.item.producto }}
@@ -135,8 +110,7 @@
                     </td>
                     <td class="text-xs-center">
                       <v-text-field v-model="props.item.fracciones"></v-text-field>
-                    </td>
-           
+                    </td>           
                     <td class="text-xs-center green--text">
                       {{ props.item.fxcaja }}
                     </td>
@@ -148,18 +122,9 @@
                           parseInt(props.item.fracciones))
                       }}
                     </td>
-                    <td  class="text-xs-center blue--text">
-                                {{props.item.stock}}
-                    </td>
-                    <td class="text-xs-center green--text">
-                     {{
-                        props.item.codigoLote
-                      }}
-                    </td>
-                    
-                    <td class="text-xs-center green--text">
-                      {{props.item.registroSanitario}}
-                    </td>
+                    <td  class="text-xs-center blue--text"> {{ props.item.stock }} </td>
+                    <td class="text-xs-center green--text">{{ props.item.codigoLote }}</td>                    
+                    <td class="text-xs-center green--text">{{ props.item.registroSanitario }}</td>
                     <td class="text-xs-center green--text">
                       <v-text-field prefix="$" v-model="props.item.pvp"></v-text-field>
                     </td>
@@ -199,13 +164,7 @@
             <span>Forma de pago</span>
              <v-flex xs12 sm12 md12 lg12 xl12></v-flex>
                 <v-flex xs12 sm4 md4 lg4 xl4>
-                  <v-btn
-                    color="white"
-                    small
-                    flat
-                    class="primary"
-                    @click="Agregarformapago()"
-                  >
+                  <v-btn color="white" small flat class="primary" @click="Agregarformapago()">
                     <v-icon>add</v-icon>
                     Nuevo detalle
                   </v-btn>
@@ -214,43 +173,31 @@
                   <div id="formapago">
                     <v-flex xs12 sm12 md12 lg12 xl12>
                       <template>
-                        <v-data-table
-                          :headers="cabeceraFormapago"
-                          :items="detallesFP"
-                          hide-actions
-                          class="elevation-1"
-                        >
+                        <v-data-table :headers="cabeceraFormapago" :items="detallesFP" hide-actions
+                          class="elevation-1">
                           <template slot="items" slot-scope="props">
                             <td>
-                              <v-icon
-                                small
-                                class="mr-2"
-                                @click="eliminarDetalle(detallesFP, props.item)"
-                                >delete</v-icon
-                              >
+                              <v-icon small class="mr-2"
+                                @click="eliminarDetalle(detallesFP, props.item)">
+                                delete
+                              </v-icon>
                             </td>
                             <td>
-                              <v-autocomplete
-                                v-model="props.item.formaPago"
-                                :items="formaspagos"
-                                label="Forma pago"
-                              ></v-autocomplete>
+                              <v-autocomplete v-model="props.item.formaPago" :items="formaspagos"
+                                label="Forma pago">
+                              </v-autocomplete>
                             </td>
                             <td>
                               <v-text-field v-model="props.item.total"></v-text-field>
                             </td>
                             <td>
-                              <v-autocomplete
-                                v-model="props.item.unidadTiempo"
-                                :items="tiempos"
-                                label="Tiempo"
-                              ></v-autocomplete>
+                              <v-autocomplete v-model="props.item.unidadTiempo"
+                                :items="tiempos" label="Tiempo">
+                              </v-autocomplete>
                             </td>
                             <td v-if="props.item.unidadTiempo == 'NINGUNO'">
-                              <v-text-field
-                                v-model="props.item.plazo"
-                                disabled
-                              ></v-text-field>
+                              <v-text-field v-model="props.item.plazo" disabled>
+                              </v-text-field>
                             </td>
                             <td v-else>
                               <v-text-field v-model="props.item.plazo"></v-text-field>
@@ -281,7 +228,6 @@
                       <strong>Total:</strong>
                       ${{ (total = calcularTotal) }}
                     </v-flex>
-       
                   </div>
                 </v-layout>
               </template>
@@ -291,22 +237,23 @@
               <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
             </v-flex>
             <v-flex xs12 sm12 md12 lg12 xl12>
-              <v-btn color="blue darken-1" flat @click.native="ocultarNuevo()"
-                >Cancelar</v-btn
-              >
-              <v-btn color="success" v-if="verDetalle == 0" @click.native="guardar()"
-                >Guardar</v-btn
-              >
+              <v-btn color="blue darken-1" flat @click.native="ocultarNuevo()">
+                Cancelar
+              </v-btn>
+              <v-btn color="success" v-if="verDetalle == 0 && !editando" @click.native="guardar()">
+                Guardar
+              </v-btn>
             </v-flex>
           </v-layout>
         </v-container>
       </v-flex>
+
       <v-dialog v-model="adModal" max-width="290">
         <v-card>
           <v-card-title class="headline" v-if="adAccion == 1">Activar Item</v-card-title>
-          <v-card-title class="headline" v-if="adAccion == 2"
-            >Desactivar Item</v-card-title
-          >
+          <v-card-title class="headline" v-if="adAccion == 2">
+            Desactivar Item
+          </v-card-title>
           <v-card-text>
             Estás a punto de
             <span v-if="adAccion == 1">activar</span>
@@ -315,26 +262,20 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn @click="activarDesactivarCerrar()" color="green darken-1" flat="flat"
-              >Cancelar</v-btn
-            >
-            <v-btn
-              v-if="adAccion == 1"
-              @click="activar()"
-              color="orange darken-4"
-              flat="flat"
-              >Activar</v-btn
-            >
-            <v-btn
-              v-if="adAccion == 2"
-              @click="desactivar()"
-              color="orange darken-4"
-              flat="flat"
-              >Desactivar</v-btn
-            >
+            <v-btn @click="activarDesactivarCerrar()" color="green darken-1" flat="flat">
+              Cancelar
+            </v-btn>
+            <v-btn v-if="adAccion == 1" @click="activar()" color="orange darken-4"
+              flat="flat">
+              Activar
+            </v-btn>
+            <v-btn v-if="adAccion == 2" @click="desactivar()" color="orange darken-4" flat="flat">
+              Desactivar
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
+
       <v-dialog v-model="dialog" max-width="1000px">
         <v-card>
           <v-card-title>
@@ -344,24 +285,16 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12 sm12 md12 lg12 xl12>
-                  <v-text-field
-                    v-model="texto"
-                    @keyup.enter="listarArticulosnombres(texto)"
-                    class="text-xs-center"
-                    append-icon="search"
-                    label="Búsqueda"
-                  ></v-text-field>
+                  <v-text-field v-model="texto" @keyup.enter="listarArticulosnombres(texto)"
+                    class="text-xs-center" append-icon="search" label="Búsqueda">
+                  </v-text-field>
                   <template>
-                    <v-data-table
-                      :headers="cabeceraArticulos"
-                      :items="articulos"
-                      class="elevation-1"
-                    >
+                    <v-data-table :headers="cabeceraArticulos" :items="articulos" class="elevation-1">
                       <template v-slot:items="props">
                         <td class="justify-center layout px-0">
-                          <v-icon small class="mr-2" @click="agregarDetalle(props.item)"
-                            >add</v-icon
-                          >
+                          <v-icon small class="mr-2" @click="agregarDetalle(props.item)">
+                            add
+                          </v-icon>
                         </td>
                         <td class="blue--text">{{ props.item.codigoBarra }}</td>
                         <td class="blue--text">{{ props.item.codigoLote }}</td>
@@ -379,27 +312,31 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-data-table
-        v-if="!verNuevo"
-        :headers="cabeceraCompras"
-        :items="compras"
-        class="elevation-1"
-        :search="search"
-      >
+
+      <v-data-table v-if="!verNuevo" :headers="cabeceraCompras" :items="compras"
+        class="elevation-1" :search="search">
         <template v-slot:items="props">
           <td>
             <v-icon small class="mr-2" @click="verDetalleC(props.item)">tab</v-icon>
-            <v-icon small class="mr-2" @click="GenerarPDF(props.item)" v-if="props.item.estado" >picture_as_pdf</v-icon>
-            <template v-if="props.item.estado">
-              <v-icon small @click="activarDesactivarMostrar(2, props.item)"
-                >block</v-icon
-              >
+            <template v-if="esGuardaAlmacen">
+              <template v-if="props.item.estado">
+                <v-icon small class="mr-2" @click="GenerarPDF(props.item)">
+                  picture_as_pdf
+                </v-icon>
+                <v-icon small @click="activarDesactivarMostrar(2, props.item)">
+                  block
+                </v-icon>
+              </template>
+              <template v-else>
+                <v-icon small @click="eliminarEgreso(props.item._id)">
+                  delete
+                </v-icon>
+                <v-icon small @click="activarDesactivarMostrar(1, props.item)">
+                  check
+                </v-icon>
+              </template>
             </template>
-            <template v-else>
-              <v-icon small @click="activarDesactivarMostrar(1, props.item)"
-                >check</v-icon
-              >
-            </template>
+
           </td>
           <td class="blue--text">
             {{ props.item.descripcion }}
@@ -428,6 +365,7 @@
           <h3>No hay artículos agregados al detalle.</h3>
         </template>
       </v-data-table>
+
     </v-flex>
   </v-layout>
 </template>
@@ -435,8 +373,6 @@
 <script>
 import moment from "moment";
 import axios from "axios";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import Swal from "sweetalert2";
 export default {
   computed: {
@@ -510,11 +446,38 @@ export default {
 
       return resultado.toFixed(2);
     },
+    esGuardaAlmacen() {
+      return (this.$store.state.usuario.rol == "609ed47286d0416b4a050c58");
+    }
   },
-  watch: {},
+  watch:{
+    clienteSelected(newValue, _){
+      if ( newValue.length == 0 ) {
+        this.doc_cliente        = ""
+        this.nombres_Cliente    = ""
+        this.direccion_Cliente  = ""
+        this._idCliente         = ""
+      }else{
+        const cliente = this.listClientes.find( cliente => cliente.nombres == newValue )
+        this.doc_cliente        = cliente.numDocumento
+        this.nombres_Cliente    = cliente.nombres
+        this.direccion_Cliente  = cliente.direccion
+        this._idCliente         = cliente._id
+      }
+    },
+    verNuevo(newValue, _) {
+      if ( newValue == 1 && !this.editando ) {
+        this.getClientes();
+      }
+    }
+  },
   data() {
     return { 
-      modal5:false,
+      editando: false,
+      autoUpdate: true,
+      clienteSelected: [],
+      isUpdating: false,
+      listClientes: [],      modal5:false,
       cabeceraFormapago: [
         { text: "Borrar", value: "borrar", sortable: false },
         { text: "Forma de pago", value: "formapago", sortable: false },
@@ -602,25 +565,31 @@ export default {
       adModal: 0,
       adAccion: 0,
       adNombre: "",
-      adId: "",
-      
+      adId: ""      
     };
   },
-  props: {},
-
   methods: {
-    GenerarPDF(data){
-   
-          let deta = [];
+    getClientes(edit = false, cliente = null) {
+      let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
+      axios.get("cliente/list", configuracion).then(function(response) {
+        me.listClientes = response.data;       
+        if ( edit ) me.clienteSelected = cliente;
+      }).catch(function(error) {
+        console.log(error);
+      });
+    },
+    GenerarPDF(data){  
+      let codigoPorcent; 
+      let calculoporcentual; 
+      let tarifa; 
+      let deta = [];
       for (let index = 0; index < data.detalles.length; index++) {
         const element = data.detalles[index];
         let cant = 0;
         let pu = 0;
         let totalsinimpuesto = 0;
-        let codigoPorcent = 0;
-        let calculoporcentual = 0;
-        let descto = 0;
-        let tarifa = 0;
         let val = 0;
         cant = parseInt(element.fraccionesTotales);
         pu = parseFloat(element.punit);
@@ -656,17 +625,13 @@ export default {
       }
 
        axios
-        .post("http://localhost:5000/api/pdf/pdfE", {
-        
+        .post("http://localhost:5000/api/pdf/pdfE", {        
           numComprobante: data.numComprobante,
-          fecha: this.formatearFecha(data.fechaFactura),
-         
+          fecha: this.formatearFecha(data.fechaFactura),         
           clienteDireccion: data.codigoCliente.direccion,
           clienteDocumento: data.codigoCliente.numDocumento,
           clienteNombre: data.codigoCliente.nombres,
-          detalles: {
-            detalle: deta,
-          },
+          detalles: { detalle: deta },
           clienteEmail: data.codigoCliente.email,
           clienteTelefono: data.codigoCliente.telefono,
           subtotal: data.subTotal,
@@ -675,22 +640,16 @@ export default {
           total: data.total,
           razonSocial: data.codigoDistribuidor.razonSocial,
           ruc: data.codigoDistribuidor.ruc,
-        })
+        }, {responseType: 'blob'})
         .then(function (response) {
           if (response.status==200) {
-            Swal.fire({
-              title: '<strong>Generado <u>Copia el LINK:</u></strong>',
-              icon: 'success',
-              html:
-                response.data
-            })
-            // Swal.fire("Noticias!", "Archivo PDF creado exitosamente \n"+response.data, "success");
-       
+            var oMyBlob = new Blob([response.data], {type : 'application/pdf'});
+            var url = URL.createObjectURL( oMyBlob );
+            window.open(url, "_blank");       
           }else{
             console.log(response.data.message);
           }
-        })
-        .catch(function (error) {
+        }).catch(function (error) {
           console.log(error);
         });
     },
@@ -731,19 +690,16 @@ export default {
           console.log(error);
         });
     },
-
-    verDetalleC(data) {
- 
+    async verDetalleC(data) { 
       this.totalRet = data.totalRetenido;
       this.verNuevo = 1;
+      this.editando = true;
       this.numComprobante = data.numComprobante;
       this.descripcion = data.descripcion;
-      this.doc_cliente = data.codigoCliente.numDocumento;
-      this.nombres_Cliente = data.codigoCliente.nombres;
-      this.direccion_Cliente = data.codigoCliente.direccion;
       this.fechaFactura = this.formatearFecha(data.fechaFactura);
 
       this.listarDetalles(data._id);
+      await this.getClientes(true, data.codigoCliente.nombres);
     },
     formatearFecha(value) {
       if (value) {
@@ -774,6 +730,8 @@ export default {
       }
     },
     ocultarNuevo() {
+      this.editando = false;
+      this.clienteSelected = '';
       this.verNuevo = 0;
       this.limpiar();
     },
@@ -1117,31 +1075,6 @@ export default {
           console.log(error);
         });
     },
-    buscarCliente(data) {
-      let me = this;
-      let header = { Token: this.$store.state.token };
-      let configuracion = { headers: header };
-      let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
-      let codigoUsuario = this.$store.state.usuario._id;
-
-      axios
-        .get("cliente/consulta?data=" + data, configuracion)
-        .then(function (response) {
-          if (response.status == 206) {
-            Swal.fire("Error", response.data.message, "error");
-               me.direccion_Cliente = ""
-            me.nombres_Cliente = ""
-            me._idCliente = ""
-          } else {
-            me.direccion_Cliente = response.data.direccion;
-            me.nombres_Cliente = response.data.nombres;
-            me._idCliente = response.data._id;
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
     activarDesactivarMostrar(accion, item) {
       this.adModal = 1;
       this.adNombre = item.numComprobante;
@@ -1191,6 +1124,28 @@ export default {
           console.log(error);
         });
     },
+    eliminarEgreso(egreso_id){
+      let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
+
+      Swal.fire({
+        title: 'Estas seguro de eliminar este egreso pendiente?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar',
+        denyButtonText: `Cancelar`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios.delete(`egresos/eliminarEgreso/${egreso_id}`, configuracion).then(function(response){
+            me.listar();
+          }).catch(function (error) {
+            console.log(error);
+          });
+        }
+      })
+
+    }
   },
   created() {
     this.listar();

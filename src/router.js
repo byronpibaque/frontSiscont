@@ -23,6 +23,12 @@ import perchas from './components/perchas.vue'
 import consultaretenciones from './components/consultaretenciones.vue'
 import consultacuentasporpagar from './components/consultacuentasporpagar.vue'
 import egresos from './components/egresos.vue'
+import SetCredenciales from './components/SetCredenciales.vue'
+import Temperatura_Humedad from './components/temp_humedad/Index.vue'
+import Vencimiento_Producto from './components/vencimiento_producto/Index.vue'
+import ActaEntrega from './components/acta_entrega/Index.vue'
+import AddActaEntrega from './components/acta_entrega/Add.vue'
+import DetalleActaEntrega from './components/acta_entrega/Detalle.vue'
 
 Vue.use(Router)
 
@@ -41,7 +47,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -55,7 +62,23 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
+      }
+    },
+    {
+      path: '/temp_humedad',
+      name: 'temp_humedad',
+      component: Temperatura_Humedad,
+      meta:{
+        contabilidad:true,
+        administrador:true,
+        guardaalmacen:true,
+        compraspublica:true,
+        supervisor:true,
+        gerente:true,
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -69,7 +92,8 @@ var router = new Router({
        compraspublica:true,
        supervisor:true,
        gerente:true,
-       facturacion:true
+       facturacion:true,
+       quimico:true
      }
    },
      {
@@ -83,7 +107,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -97,7 +122,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -111,7 +137,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -125,7 +152,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -139,7 +167,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -153,7 +182,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -167,7 +197,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -181,7 +212,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -195,7 +227,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -209,7 +242,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -223,7 +257,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -237,7 +272,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -251,7 +287,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -265,7 +302,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -279,7 +317,8 @@ var router = new Router({
         compraspublica:true,
         supervisor:true,
         gerente:true,
-        facturacion:true
+        facturacion:true,
+        quimico:true
       }
     },
     {
@@ -297,7 +336,82 @@ var router = new Router({
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
-    }
+    },
+    {
+      path: '/set-credenciales',
+      name: 'set-credenciales',
+      component: SetCredenciales,
+      meta:{
+        contabilidad:true,
+        administrador:true,
+        guardaalmacen:true,
+        compraspublica:true,
+        supervisor:true,
+        gerente:true,
+        facturacion:true,
+        quimico:true
+      }
+    },
+    {
+      path: '/vencimiento_productos',
+      name: 'vencimiento_productos',
+      component: Vencimiento_Producto,
+      meta:{
+        contabilidad:true,
+        administrador:true,
+        guardaalmacen:true,
+        compraspublica:true,
+        supervisor:true,
+        gerente:true,
+        facturacion:true,
+        quimico:true
+      }
+    },
+    {
+      path: '/acta_entrega',
+      name: 'acta_entrega',
+      component: ActaEntrega,
+      meta:{
+        contabilidad:true,
+        administrador:true,
+        guardaalmacen:true,
+        compraspublica:true,
+        supervisor:true,
+        gerente:true,
+        facturacion:true,
+        quimico:true
+      }
+    },
+    {
+      path: '/add_acta_entrega',
+      name: 'add_acta_entrega',
+      component: AddActaEntrega,
+      meta:{
+        contabilidad:true,
+        administrador:true,
+        guardaalmacen:true,
+        compraspublica:true,
+        supervisor:true,
+        gerente:true,
+        facturacion:true,
+        quimico:true
+      }
+    },
+    {
+      path: '/detalle_acta_entrega/:acta_id',
+      name: 'detalle_acta_entrega',
+      component: DetalleActaEntrega,
+      meta:{
+        contabilidad:true,
+        administrador:true,
+        guardaalmacen:true,
+        compraspublica:true,
+        supervisor:true,
+        gerente:true,
+        facturacion:true,
+        quimico:true
+      }
+    },
   ]
 })
 
@@ -335,6 +449,11 @@ router.beforeEach((to, from, next) => {
     }
   }
   else if (store.state.usuario && store.state.usuario.rol=='60c0e96c13a9bc08b085f378') {
+    if (to.matched.some(record => record.meta.facturacion)) {
+      next()
+    }
+  }
+  else if (store.state.usuario && store.state.usuario.rol=='6425b4e63015a625b227f4b7') {
     if (to.matched.some(record => record.meta.facturacion)) {
       next()
     }

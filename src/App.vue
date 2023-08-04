@@ -18,10 +18,10 @@
         </template>
         <template>
           <!-- BODEGA -->
-          <v-list-group
-            v-if="esAdministrador || esGerente || esGuardaAlmacen || esSupervisor"
-          >
-            <v-list-tile slot="activator">
+          <!-- <v-list-group
+            v-if="esAdministrador || esGerente || esGuardaAlmacen || esSupervisor || esQuimico || esContabilidad"> -->
+          <v-list-group>
+          <v-list-tile slot="activator">
               <v-list-tile-content>
                 <v-list-tile-title>Bodega</v-list-tile-title>
               </v-list-tile-content>
@@ -82,19 +82,27 @@
                 <v-list-tile-title>Fabricantes</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
+            <v-list-tile class="blue--text" :to="{ name: 'temp_humedad' }">
+              <v-list-tile-action>
+                <v-icon>dew_point</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>Temperatura y Humedad</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile class="blue--text" :to="{ name: 'product_caducar' }">
+              <v-list-tile-action>
+                <v-icon>schedule</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>Productos a Caducar</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
           </v-list-group>
           <!-- PERSONAS -->
           <v-list-group
-            v-if="
-              esAdministrador ||
-              esGerente ||
-              esGuardaAlmacen ||
-              esSupervisor ||
-              esFacturacion ||
-              esContabilidad ||
-              esComprasPublicas
-            "
-          >
+            v-if="esAdministrador || esGerente || esGuardaAlmacen || esSupervisor || esFacturacion || 
+              esContabilidad || esComprasPublicas">
             <v-list-tile slot="activator">
               <v-list-tile-content>
                 <v-list-tile-title>Personas</v-list-tile-title>
@@ -119,16 +127,8 @@
           </v-list-group>
           <!-- DOCUMENTOS COMERCIALES -->
           <v-list-group
-            v-if="
-              esAdministrador ||
-              esGerente ||
-              esGuardaAlmacen ||
-              esSupervisor ||
-              esFacturacion ||
-              esContabilidad ||
-              esComprasPublicas
-            "
-          >
+            v-if=" esAdministrador || esGerente || esGuardaAlmacen || esSupervisor || esFacturacion ||
+              esContabilidad || esComprasPublicas">
             <v-list-tile slot="activator">
               <v-list-tile-content>
                 <v-list-tile-title>Documentos Comerciales</v-list-tile-title>
@@ -150,19 +150,19 @@
                 <v-list-tile-title>Retenciones</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
+            <v-list-tile class="blue--text" :to="{ name: 'acta_entrega' }">
+              <v-list-tile-action>
+                <v-icon>description</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>Acta de Entrega</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
           </v-list-group>
           <!-- CONSULTAS -->
           <v-list-group
-            v-if="
-              esAdministrador ||
-              esGerente ||
-              esGuardaAlmacen ||
-              esSupervisor ||
-              esFacturacion ||
-              esContabilidad ||
-              esComprasPublicas
-            "
-          >
+            v-if=" esAdministrador || esGerente || esGuardaAlmacen || esSupervisor || esFacturacion ||
+              esContabilidad || esComprasPublicas">
             <v-list-tile slot="activator">
               <v-list-tile-content>
                 <v-list-tile-title>Consultas</v-list-tile-title>
@@ -194,13 +194,14 @@
             </v-list-tile>
           </v-list-group>
           <!-- ADMINISTRACION -->
-          <v-list-group v-if="esAdministrador || esGerente || esSupervisor">
+          <v-list-group v-if="esAdministrador || esGerente || esSupervisor || esFacturacion">
             <v-list-tile slot="activator">
               <v-list-tile-content>
                 <v-list-tile-title>Administración</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
-            <v-list-tile class="blue--text" :to="{ name: 'creardistribuidores' }">
+            <v-list-tile v-if="esAdministrador || esGerente || esSupervisor "
+              class="blue--text" :to="{ name: 'creardistribuidores' }">
               <v-list-tile-action>
                 <v-icon>supervisor_account</v-icon>
               </v-list-tile-action>
@@ -208,7 +209,8 @@
                 <v-list-tile-title>Distribuidores</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
-            <v-list-tile class="green--text" :to="{ name: 'crearbodegas' }">
+            <v-list-tile v-if="esAdministrador || esGerente || esSupervisor"
+              class="green--text" :to="{ name: 'crearbodegas' }">
               <v-list-tile-action>
                 <v-icon>admin_panel_settings</v-icon>
               </v-list-tile-action>
@@ -216,7 +218,8 @@
                 <v-list-tile-title>Bodegas</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
-            <v-list-tile class="blue--text" :to="{ name: 'usuarios' }">
+            <v-list-tile v-if="esAdministrador || esGerente || esSupervisor"
+              class="blue--text" :to="{ name: 'usuarios' }">
               <v-list-tile-action>
                 <v-icon>people</v-icon>
               </v-list-tile-action>
@@ -224,7 +227,8 @@
                 <v-list-tile-title>Usuarios</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
-            <v-list-tile class="green--text" :to="{ name: 'secuenciales' }">
+            <v-list-tile v-if="esAdministrador || esGerente || esSupervisor || esFacturacion"
+              class="green--text" :to="{ name: 'secuenciales' }">
               <v-list-tile-action>
                 <v-icon>rotate_right</v-icon>
               </v-list-tile-action>
@@ -233,6 +237,16 @@
               </v-list-tile-content>
             </v-list-tile>
           </v-list-group>
+
+          <template>
+          <v-list-tile :to="{ name: 'set-credenciales' }">
+            <v-list-tile-title>
+              <v-icon>lock</v-icon>
+              &nbsp;&nbsp;Cambiar Usuario/Contraseña
+            </v-list-tile-title>
+          </v-list-tile>
+        </template>
+
         </template>
       </v-list>
     </v-navigation-drawer>
@@ -272,7 +286,7 @@
       <v-layout justify-center>
         <v-flex text-xs-center>
           <v-card flat tile id="tool" class="white--text">
-            <v-card-text class="white--text pt-0">Acounting &copy;2021</v-card-text>
+            <v-card-text class="white--text pt-0">Acounting &copy;2023</v-card-text>
           </v-card>
         </v-flex>
       </v-layout>
@@ -338,6 +352,12 @@ export default {
       return (
         this.$store.state.usuario &&
         this.$store.state.usuario.rol == "60c0e96c13a9bc08b085f378"
+      );
+    },
+    esQuimico() {
+      return (
+        this.$store.state.usuario &&
+        this.$store.state.usuario.rol == "6425b4e63015a625b227f4b7"
       );
     },
   },

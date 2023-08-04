@@ -41,7 +41,6 @@
                  <v-flex xs12 sm12 md12>
                    
                   </v-flex>
-                
                     <v-flex xs4 sm4 md4>
                         <v-text-field v-model="nombresC" label="Nombre de contacto"></v-text-field>
                     </v-flex>
@@ -51,10 +50,6 @@
                     <v-flex xs4 sm4 md4>
                         <v-text-field v-model="correoC" label="Correo de contacto"></v-text-field>
                     </v-flex>
-                
-              
-           
-
                   <v-flex xs12 sm12 md12 v-show="valida">
                     <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
                   </v-flex>
@@ -100,9 +95,14 @@
       <v-data-table :headers="headers" :items="cliente" :search="search" class="elevation-1">
         <template v-slot:items="props">
           <td class="justify-center layout px-0">
-            <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-            <v-icon small class="mr-2" @click="eliminar(props.item)">delete</v-icon>
-           
+            <v-icon v-show="esGuardaAlmacen"
+              small class="mr-2" @click="editItem(props.item)">
+              edit
+            </v-icon>
+            <v-icon v-show="esGuardaAlmacen"
+              small class="mr-2" @click="eliminar(props.item)">
+              delete
+            </v-icon>
           </td>
           <td>{{ props.item.razonsocial }}</td>
           <td>{{ props.item.ruc }}</td>
@@ -124,13 +124,11 @@
   </v-layout>
 </template>
 
-
 <script>
 import axios from "axios";
 export default {
   data() {
     return {
-      
       search: "",
       cliente: [],
       headers: [
@@ -161,6 +159,9 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Nuevo registro" : "Editar registro";
+    },
+    esGuardaAlmacen() {
+      return (this.$store.state.usuario.rol == "609ed47286d0416b4a050c58");
     }
   },
   watch: {
@@ -218,26 +219,26 @@ export default {
       this.valida = 0;
       this.validaMensaje = [];
 
-      if (this.ruc.length==0) {
-        this.validaMensaje.push("*RUC no puede estar vacío.")
-      }
+      // if (this.ruc.length==0) {
+      //   this.validaMensaje.push("*RUC no puede estar vacío.")
+      // }
 
-      if (this.razonsocial.length==0) {
-        this.validaMensaje.push("*Razon Social no puede estar vacío.")
-      }
-      if (this.direccion.length==0) {
-        this.validaMensaje.push("*Direccion no puede estar vacío.")
-      }
+      // if (this.razonsocial.length==0) {
+      //   this.validaMensaje.push("*Razon Social no puede estar vacío.")
+      // }
+      // if (this.direccion.length==0) {
+      //   this.validaMensaje.push("*Direccion no puede estar vacío.")
+      // }
    
-      if (this.nombresC.length==0) {
-        this.validaMensaje.push("*Nombre de contacto no puede estar vacío.")
-      }
-      if (this.telefonoC.length==0) {
-        this.validaMensaje.push("*Telefono de contacto no puede estar vacío.")
-      }
-      if (this.correoC.length==0) {
-        this.validaMensaje.push("*Correo de contaco no puede estar vacío.")
-      }
+      // if (this.nombresC.length==0) {
+      //   this.validaMensaje.push("*Nombre de contacto no puede estar vacío.")
+      // }
+      // if (this.telefonoC.length==0) {
+      //   this.validaMensaje.push("*Telefono de contacto no puede estar vacío.")
+      // }
+      // if (this.correoC.length==0) {
+      //   this.validaMensaje.push("*Correo de contaco no puede estar vacío.")
+      // }
      
 
 

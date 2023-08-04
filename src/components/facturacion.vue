@@ -4,47 +4,27 @@
       <v-toolbar flat color="white">
         <v-toolbar-title>Facturas</v-toolbar-title>
         <v-flex xs12 sm4 md4 lg4 xl4>
-          <v-btn
-            v-if="btn_nuevo == 0"
-            color="white"
-            small
-            flat
-            class="primary"
-            @click="
-              (modoActualizar = 0),
-                (modoVer = 0),
-                (btn_nuevo = 1),
-                obtenerDatos()
-            "
-          >
+          <v-btn v-if="btn_nuevo == 0" color="white" small flat class="primary"
+            @click="(modoActualizar = 0), (modoVer = 0), (btn_nuevo = 1), obtenerDatos()">
             <v-icon>add</v-icon>
             Nuevo
           </v-btn>
         </v-flex>
         <v-spacer></v-spacer>
-        <v-text-field
-          class="text-xs-center"
-          v-model="search"
-          append-icon="search"
-          label="Búsqueda"
-          single-line
-          hide-details
-        ></v-text-field>
+        <v-text-field class="text-xs-center" v-model="search" append-icon="search"
+          label="Búsqueda" single-line hide-details>
+        </v-text-field>
       </v-toolbar>
       <!-- Ventana para crear una factura -->
       <v-container v-if="btn_nuevo" grid-list-sm class="pa-4 white">
         <v-layout wrap>
           <v-flex xs12 sm2 md2 lg2 xl2>
-            <v-text-field
-              v-model="numComprobante"
-              label="Número Comprobante"
-            ></v-text-field>
+            <v-text-field v-model="numComprobante" label="Número Comprobante">
+            </v-text-field>
           </v-flex>
           <v-flex xs12 sm2 md2 lg2 xl2>
-            <v-text-field
-              v-model="ptoemision"
-              label="Punto emisión"
-            ></v-text-field>
+            <v-text-field v-model="ptoemision" label="Punto emisión">
+            </v-text-field>
           </v-flex>
         </v-layout>
         <span>Datos Comprador</span>
@@ -57,137 +37,104 @@
               </v-radio-group>
             </v-flex>
             <v-flex xs12 sm2 md2 lg2 xl2>
-              <v-text-field
-                v-model="ruc_comprador"
-                label="Cédula/RUC"
-                type="number"
-                v-on:keyup.enter="buscarCliente(ruc_comprador)"
-              ></v-text-field>
+              <v-text-field v-model="ruc_comprador" label="Cédula/RUC" type="number"
+                v-on:keyup.enter="buscarCliente(ruc_comprador)">
+              </v-text-field>
             </v-flex>
             <v-flex xs12 sm4 md4 lg4 xl4>
-              <v-text-field
-                v-model="razonsocial_comprador"
-                label="Razon Social/Apellidos y Nombres"
+              <v-text-field v-model="razonsocial_comprador" label="Razon Social/Apellidos y Nombres"
                 v-on:keyup.enter="buscarCliente(razonsocial_comprador)"
               ></v-text-field>
             </v-flex>
             <v-flex xs12 sm4 md4 lg4 xl4>
-              <v-text-field
-                v-model="direccion_comprador"
-                label="Dirección Comprador"
-              ></v-text-field>
+              <v-text-field v-model="direccion_comprador" label="Dirección Comprador">
+              </v-text-field>
             </v-flex>
             <v-flex xs12 sm4 md4 lg4 xl4>
-              <v-text-field
-                v-model="email_comprador"
-                label="Email"
-                type="email"
-              ></v-text-field>
+              <v-text-field v-model="email_comprador" label="Email" type="email">
+              </v-text-field>
             </v-flex>
             <v-flex xs12 sm4 md4 lg4 xl4>
-              <v-text-field
-                v-model="telefono_comprador"
-                label="Telefono"
-              ></v-text-field>
+              <v-text-field v-model="telefono_comprador" label="Telefono">
+              </v-text-field>
             </v-flex>
           </v-layout>
         </div>
         <span>Detalles de la factura</span>
         <v-flex xs12 sm12 md12 lg12 xl12>
-          <v-btn
-            v-if="!modoVer"
-            color="white"
-            small
-            flat
-            class="primary"
-            @click="AgregarDetalle()"
-          >
+          <v-btn v-if="!modoVer" color="white" small flat class="primary" @click="AgregarDetalle()">
             <v-icon>add</v-icon>
             Nuevo detalle
           </v-btn>
         </v-flex>
         <v-layout wrap>
           <v-flex xs12 sm6 md6 lg6 x6>
-            <v-text-field
-              v-model="codigo"
-              label="Código"
-              @keyup.enter="buscarCodigo(codigo)"
-            ></v-text-field>
+            <v-text-field v-model="codigo" label="Código" @keyup.enter="buscarCodigo(codigo)">
+            </v-text-field>
           </v-flex>
           <v-flex xs12 sm2 md2 lg2 xl2>
             <v-btn small fab dark color="teal" @click="dialog = 1">
               <v-icon dark>list</v-icon>
             </v-btn>
           </v-flex>
+          <v-flex xs12 sm3 md3 lg3 xl3>
+            <v-checkbox v-model="isActaEntrega" label="ES ACTA DE ENTREGA"></v-checkbox>
+          </v-flex>
           <v-flex xs12 sm2 md2 lg2 xl2 v-show="errorArticulo">
             <div class="red--text" v-text="errorArticulo"></div>
           </v-flex>
         </v-layout>
+
+        <!--DETALLE FACTURA-->
         <div id="comprador">
           <v-layout wrap>
             <v-flex xs12 sm12 md12 lg12 xl12>
               <template>
-                <v-data-table
-                  :headers="cabeceraDetalles"
-                  :items="detalles"
-                  hide-actions
-                  class="elevation-1"
-                >
+                <!-- DETALLE DE LOS PRODUCTOS -->
+                <v-data-table :headers="cabeceraDetalles" :items="detalles" hide-actions class="elevation-1">
                   <template slot="items" slot-scope="props">
                     <td>
-                      <v-icon
-                        small
-                        class="mr-2"
-                        @click="eliminarDetalle(detalles, props.item)"
-                        >delete</v-icon
-                      >
+                      <v-icon small class="mr-2" @click="eliminarDetalle(detalles, props.item)">
+                        delete
+                      </v-icon>
                     </td>
                     <td>
-                      <v-text-field
-                        v-model="props.item.codigoBarra"
-                      ></v-text-field>
+                      <v-text-field v-model="props.item.codigoBarra" style="width: 150px">
+                      </v-text-field>
                     </td>
                     <td>
-                      <v-text-field
-                        v-model="props.item.codigoAuxiliar"
-                      ></v-text-field>
+                      <v-text-field v-model="props.item.codigoAuxiliar" style="width: 100px"></v-text-field>
                     </td>
                     <td>
-                      <v-text-field
-                        v-model="props.item.descripcion"
-                      ></v-text-field>
+                      <v-text-field v-model="props.item.descripcion" style="width: 220px"></v-text-field>
                     </td>
                     <td>
-                      <v-text-field
-                        v-model="props.item.nombreComercial"
-                      ></v-text-field>
+                      <v-text-field v-model="props.item.nombreComercial" style="width: 200px"></v-text-field>
                     </td>
                     <td>
-                      <v-text-field
-                        v-model="props.item.registroSanitario"
-                      ></v-text-field>
+                      <v-text-field v-model="props.item.registroSanitario"></v-text-field>
                     </td>
 
                     <td>
-                      <v-text-field v-model="props.item.fechas"></v-text-field>
+                      <v-text-field v-model="props.item.fechas" style="width: 240px"></v-text-field>
                     </td>
                     <td>
-                      <v-text-field
-                        v-model="props.item.cantidad"
-                      ></v-text-field>
+                      <v-text-field v-model="props.item.fraccionesTotales" 
+                        disabled class="centrar-text-stock">
+                      </v-text-field>
                     </td>
                     <td>
-                      <v-text-field
-                        v-model="props.item.precioUni"
-                      ></v-text-field>
+                      <v-text-field v-model="props.item.cantidad" class="centrar-text">
+                      </v-text-field>
+                    </td>
+                    <td>
+                      <v-text-field v-model="props.item.precioUni"></v-text-field>
                     </td>
                     <td>
                       <v-checkbox v-model="props.item.iva"></v-checkbox>
                     </td>
                     <td>
-                      <v-text-field
-                        v-model="props.item.descuento"
-                      ></v-text-field>
+                      <v-text-field v-model="props.item.descuento"></v-text-field>
                     </td>
                     <td class="text-xs-right" v-if="props.item.iva">
                       {{
@@ -207,20 +154,16 @@
                     <h3>No hay artículos agregados al detalle.</h3>
                   </template>
                 </v-data-table>
+                <!-- FIN DE LOS DETALLE DE LOS PRODUCTOS -->
               </template>
             </v-flex>
           </v-layout>
         </div>
+        <!--FIN DEL DETALLE FACTURA-->
+
         <span>Forma de pago</span>
         <v-flex xs12 sm4 md4 lg4 xl4>
-          <v-btn
-            v-if="!modoVer"
-            color="white"
-            small
-            flat
-            class="primary"
-            @click="Agregarformapago()"
-          >
+          <v-btn v-if="!modoVer" color="white" small flat class="primary" @click="Agregarformapago()">
             <v-icon>add</v-icon>
             Nuevo detalle
           </v-btn>
@@ -229,43 +172,28 @@
           <div id="formapago">
             <v-flex xs12 sm12 md12 lg12 xl12>
               <template>
-                <v-data-table
-                  :headers="cabeceraFormapago"
-                  :items="detallesFP"
-                  hide-actions
-                  class="elevation-1"
-                >
+                <v-data-table :headers="cabeceraFormapago" :items="detallesFP" hide-actions
+                  class="elevation-1">
                   <template slot="items" slot-scope="props">
                     <td>
-                      <v-icon
-                        small
-                        class="mr-2"
-                        @click="eliminarDetalle(detallesFP, props.item)"
-                        >delete</v-icon
-                      >
+                      <v-icon small class="mr-2" @click="eliminarDetalle(detallesFP, props.item)">
+                        delete
+                      </v-icon>
                     </td>
                     <td>
-                      <v-autocomplete
-                        v-model="props.item.formaPago"
-                        :items="formaspagos"
-                        label="Forma pago"
-                      ></v-autocomplete>
+                      <v-autocomplete v-model="props.item.formaPago" :items="formaspagos" label="Forma pago">
+                      </v-autocomplete>
                     </td>
                     <td>
                       <v-text-field v-model="props.item.total"></v-text-field>
                     </td>
                     <td>
-                      <v-autocomplete
-                        v-model="props.item.unidadTiempo"
-                        :items="tiempos"
-                        label="Tiempo"
-                      ></v-autocomplete>
+                      <v-autocomplete v-model="props.item.unidadTiempo" :items="tiempos" label="Tiempo">
+                      </v-autocomplete>
                     </td>
                     <td v-if="props.item.unidadTiempo == 'NINGUNO'">
-                      <v-text-field
-                        v-model="props.item.plazo"
-                        disabled
-                      ></v-text-field>
+                      <v-text-field v-model="props.item.plazo" disabled>
+                      </v-text-field>
                     </td>
                     <td v-else>
                       <v-text-field v-model="props.item.plazo"></v-text-field>
@@ -301,44 +229,28 @@
           </div>
         </v-layout>
         <v-flex xs12 sm12 md12 v-show="valida">
-          <div
-            class="red--text"
-            v-for="v in validaMensaje"
-            :key="v"
-            v-text="v"
-          ></div>
+          <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v">
+          </div>
         </v-flex>
         <v-layout wrap>
           <v-flex xs2 sm2 md2 lg2 xl2>
-            <v-btn
-              color="primary"
-              v-if="modoActualizar"
-              @click.native="guardar()"
-            >
+            <v-btn color="primary" v-if="modoActualizar" @click.native="guardar()">
               <v-icon>send</v-icon>
-              Guardar y Enviar</v-btn
-            >
+              Guardar y Enviar
+            </v-btn>
           </v-flex>
           <v-flex xs2 sm2 md2 lg2 xl2>
             <div v-if="modoActualizar">
-              <v-btn
-                color="green"
-                v-if="!modoVer"
-                @click.native="actualizarlaFactura()"
-              >
+              <v-btn color="green" v-if="!modoVer" @click.native="actualizarlaFactura()">
                 <v-icon>forward_to_inbox</v-icon>
-                Actualizar Borrador</v-btn
-              >
+                Actualizar Borrador
+              </v-btn>
             </div>
             <div v-else>
-              <v-btn
-                color="orange"
-                v-if="!modoVer"
-                @click.native="guardarFactura()"
-              >
+              <v-btn color="orange" v-if="!modoVer" @click.native="guardarFactura()">
                 <v-icon>forward_to_inbox</v-icon>
-                Guardar Borrador</v-btn
-              >
+                Guardar Borrador
+              </v-btn>
             </div>
           </v-flex>
           <v-flex></v-flex>
@@ -352,12 +264,7 @@
       </v-container>
       <!-- Tabla de Facturas creadas -->
       <v-container v-if="btn_nuevo == 0" grid-list-sm class="pa-4 white">
-        <v-data-table
-          :headers="CabeceraFacturas"
-          :items="Facturas"
-          class="elevation-1"
-          :search="search"
-        >
+        <v-data-table :headers="CabeceraFacturas" :items="Facturas" class="elevation-1" :search="search">
           <template v-slot:items="props">
             <td>
               <v-icon small class="mr-2" v-if="props.item.estado!=1" @click="actualizarFactura(props.item)"
@@ -367,9 +274,9 @@
                 >tab</v-icon
               >
               <template v-if="props.item.estado">
-                <v-icon small @click="activarDesactivarMostrar(2, props.item)"
-                  >block</v-icon
-                >
+                <v-icon small @click="activarDesactivarMostrar(2, props.item)">
+                  block
+                </v-icon>
               </template>
           
             </td>
@@ -416,31 +323,22 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs12 sm12 md12 lg12 xl12>
-                <v-text-field
-                  v-model="texto"
-                  @keyup.enter="listarArticulosnombres(texto)"
-                  class="text-xs-center"
-                  append-icon="search"
-                  label="Búsqueda"
-                ></v-text-field>
+                <v-text-field v-model="texto" @keyup.enter="listarArticulosnombres(texto)"
+                  class="text-xs-center" append-icon="search" label="Búsqueda">
+                </v-text-field>
                 <template>
-                  <v-data-table
-                    :headers="cabeceraArticulos"
-                    :items="articulos"
-                    class="elevation-1"
-                  >
+                  <v-data-table :headers="cabeceraArticulos" :items="articulos" class="elevation-1">
                     <template v-slot:items="props">
                       <td class="justify-center layout px-0">
-                        <v-icon small class="mr-2" @click="AddDeta(props.item)"
-                          >add</v-icon
-                        >
+                        <v-icon small class="mr-2" @click="AddDeta(props.item)">
+                          add
+                        </v-icon>
                       </td>
                       <td class="blue--text">{{ props.item.codigoBarra }}</td>
                       <td class="blue--text">{{ props.item.codigoLote }}</td>
                       <td class="">{{ props.item.nombreComercial }}</td>
-                       <td class="purple--text">{{ props.item.codigoProducto.fraccionCaja }}</td>
+                      <td class="purple--text">{{ props.item.codigoProducto.fraccionCaja }}</td>
                       <td class="blue--text">{{ props.item.fraccionesTotales }}</td>
-                      
                     </template>
                   </v-data-table>
                 </template>
@@ -468,19 +366,13 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn @click="activarDesactivarCerrar()" color="green darken-1" flat="flat">Cancelar</v-btn>
-              <v-btn
-                v-if="adAccion==1"
-                @click="activar()"
-                color="blue darken-4"
-                flat="flat"
-              >Enviar</v-btn>
-              <v-btn
-                v-if="adAccion==2"
-                @click="desactivar()"
-                color="red darken-4"
-                flat="flat"
-
-              >Anular</v-btn>
+              <v-btn v-if="adAccion==1" @click="activar()"
+                color="blue darken-4" flat="flat">
+                Enviar
+              </v-btn>
+              <v-btn v-if="adAccion==2" @click="desactivar()" color="red darken-4" flat="flat">
+                Anular
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -511,11 +403,12 @@ export default {
       IdActualizar: "",
       modoActualizar: 0,
       modoVer: 0,
+      isActaEntrega: false,
       //Tabla Facturas
       CabeceraFacturas: [
         { text: "Seleccionar", value: "seleccionar", sortable: false },
         { text: "#comprobante", value: "numComprobante", sortable: false },
-         { text: "Clave de Acceso", value: "claveAcceso", sortable: false },
+        { text: "Clave de Acceso", value: "claveAcceso", sortable: false },
         { text: "Usuario", value: "codigoUsuario", sortable: false },
         { text: "Total", value: "total", sortable: false },
         { text: "Fecha", value: "createdAt", sortable: false },
@@ -563,6 +456,7 @@ export default {
         },
         { text: "Fechas de elaboracion", value: "fecha", sortable: false },
 
+        { text: "Stock Actual", value: "stock", sortable: false },
         { text: "Cantidad", value: "cantidad", sortable: false },
         { text: "Pecio Unitario", value: "precioUni", sortable: false },
         { text: "Iva", value: "iva", sortable: false },
@@ -686,7 +580,6 @@ export default {
       return resultado.toFixed(2);
     },
   },
-
   methods: {
     actualizarClave(id,clave,num){
       let me = this;
@@ -701,16 +594,12 @@ export default {
           numero:num
         })
         .then(function(response) {
-          if(response.status==200){
-          
-          me.limpiar();
-          me.btn_nuevo=0
-          me.listarFacturas();
-          
-          }
-       
-        })
-        .catch(function(error) {
+          if(response.status==200){          
+            me.limpiar();
+            me.btn_nuevo=0
+            me.listarFacturas();          
+          }       
+        }).catch(function(error) {
           console.log(error);
         });
     },
@@ -718,7 +607,6 @@ export default {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
-
 
       axios
         .put("factura/actualizar", {
@@ -760,6 +648,7 @@ export default {
       this.modoActualizar = 1;
       this.btn_nuevo = 1;
       this.tipoIdentificacion = data.codigoCliente.tipoDocumento;
+      this.isActaEntrega = data.isActaEntrega;
       this.direccion_comprador = data.codigoCliente.direccion;
       this.telefono_comprador = data.codigoCliente.telefono;
       this.email_comprador = data.codigoCliente.email;
@@ -782,6 +671,7 @@ export default {
       this.ruc_comprador = data.codigoCliente.numDocumento;
       this.numComprobante = data.numComprobante;
       this.ptoemision = data.ptoEmision;
+      this.isActaEntrega = data.isActaEntrega
       this.listarDetalles(data._id);
     },
     listarDetalles(id) {
@@ -794,8 +684,7 @@ export default {
           me.detalles = response.data.detalles;
 
           me.detallesFP = response.data.formaPago;
-        })
-        .catch(function(error) {
+        }).catch(function(error) {
           console.log(error);
         });
     },
@@ -815,13 +704,9 @@ export default {
           configuracion
         )
         .then(function(response) {
-          if (response.status == 206) {
-            Swal.fire("Aviso", response.data.message, "error");
-          } else {
-            me.Facturas = response.data;
-          }
-        })
-        .catch(function(error) {
+          if (response.status == 206) Swal.fire("Aviso", response.data.message, "error");
+          else me.Facturas = response.data;          
+        }).catch(function(error) {
           console.log(error);
         });
     },
@@ -832,19 +717,14 @@ export default {
       let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
       let codigoUsuario = this.$store.state.usuario._id;
 
-      axios
-        .get(
+      axios.get(
           "inventario/busca?data=" + code + "&codigoBodega=" + me.codigoBodega,
           configuracion
         )
         .then(function(response) {
-          if (response.status == 206) {
-            Swal.fire("Aviso", response.data.message, "error");
-          } else {
-            me.articulos = response.data;
-          }
-        })
-        .catch(function(error) {
+          if (response.status == 206) Swal.fire("Aviso", response.data.message, "error");
+          else me.articulos = response.data;
+        }).catch(function(error) {
           console.log(error);
         });
     },
@@ -934,9 +814,7 @@ export default {
       return this.valida;
     },
     guardarFactura() {
-      if (this.validar_guardar()) {
-        return;
-      }
+      if (this.validar_guardar()) { return; }
 
       let me = this;
       let header = { Token: this.$store.state.token };
@@ -945,8 +823,6 @@ export default {
       //Código para guardar una factura
       let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
       let codigoUsuario = this.$store.state.usuario._id;
-
-     
 
       axios
         .post(
@@ -964,6 +840,7 @@ export default {
             codigoBodega: this.codigoBodega,
             codigoDistribuidor: codigoDistribuidor,
             codigoUsuario: codigoUsuario,
+            isActaEntrega: this.isActaEntrega
           },
           configuracion
         )
@@ -1018,15 +895,13 @@ export default {
       let codigoDistribuidor = this.$store.state.usuario.codigoDistribuidor;
       let codigoUsuario = this.$store.state.usuario._id;
 
-      axios
-        .get(
+      axios.get(
           "inventario/buscaCodigo?data=" +
             code +
             "&codigoBodega=" +
             me.codigoBodega,
           configuracion
-        )
-        .then(function(response) {
+        ).then(function(response) {
           if (response.status == 206) {
             Swal.fire("Aviso", response.data.message, "error");
           } else {
@@ -1037,6 +912,7 @@ export default {
                 "error"
               );
             } else {
+              // console.log( response.data );
               me.AddDeta(response.data);
             }
           }
@@ -1060,12 +936,8 @@ export default {
       if (this.encuentra(data._id) == true) {
         this.errorArticulo = "El artículo ya ha sido agregado.";
       } else {
-        if(data.fraccionesTotales<=0){
-                  Swal.fire(
-              "Fallo!",
-              "No hay stock para "+data.nombreComercial,
-              "error"
-            );
+        if(data.fraccionesTotales <= 0){
+          Swal.fire("Fallo!", "No hay stock para "+data.nombreComercial, "error");
         }else{
            this.detalles.unshift({
           _id: data._id,
@@ -1074,11 +946,12 @@ export default {
           descripcion: data.codigoProducto.descripcion+" ",
           nombreComercial: data.nombreComercial,
           registroSanitario: data.registroSanitario,
-          fechas: data.fechaElaboracion + "-" + data.fechaCaducidad,
+          fechas: `FE: ${ data.fechaElaboracion.split('T')[0] } FC: ${data.fechaCaducidad.split('T')[0]}`,
           cantidad: 0,
           precioUni: data.punit,
           iva: data.iva,
           descuento: data.descuento,
+          fraccionesTotales: data.fraccionesTotales
         });
         }
         this.texto="";
@@ -1129,10 +1002,9 @@ export default {
       );
       return response.data;
     },
-
-    guardar() {
-  
+    guardar() {  
       let me = this;
+      // return console.log( me.facturascontadas );
       this.generardetalle_xml();
       this.generardetallePago_xml()
       const datos = this.datosDistribuidor();
@@ -1147,46 +1019,43 @@ export default {
         porciento = "0";
         tarifa = 0;
       }
-      
-
      
-      datos
-        .then((result) => {
-          result.establecimientos.forEach((element) => {
-            if (element.tipoEstablecimiento == "MATRIZ") {
-              dirMatriz = element.direccionEstablecimiento;
-              establecimiento = element.numEstablecimiento;
-            }
-          });
-          me.guardarXml(
-            result.razonSocial,
-            result.nombreComercial,
-            result.ruc,
-            dirMatriz,
-            establecimiento,
-            me.ptoemision,
-            me.facturascontadas,
-            dirMatriz,
-            me.tipoIdentificacion,
-            me.razonsocial_comprador,
-            me.ruc_comprador,
-            me.direccion_comprador,
-            me.totalParcial,
-            me.totaldescuento,
-            "2",
-            porciento,
-            me.totalParcial,
-            tarifa,
-            me.totalImpuesto,
-            me.total,
-            me.email_comprador,
-            me.direccion_comprador,
-            me.telefono_comprador
-          );
-        })
-        .catch((err) => {
-          console.log(err);
+      datos.then((result) => {
+        result.establecimientos.forEach((element) => {
+          if (element.tipoEstablecimiento == "MATRIZ") {
+            dirMatriz = element.direccionEstablecimiento;
+            establecimiento = element.numEstablecimiento;
+          }
         });
+        me.guardarXml(
+          result.razonSocial,
+          result.nombreComercial,
+          result.ruc,
+          dirMatriz,
+          establecimiento,
+          me.ptoemision,
+          me.facturascontadas,
+          dirMatriz,
+          me.tipoIdentificacion,
+          me.razonsocial_comprador,
+          me.ruc_comprador,
+          me.direccion_comprador,
+          me.totalParcial,
+          me.totaldescuento,
+          "2",
+          porciento,
+          me.totalParcial,
+          tarifa,
+          me.totalImpuesto,
+          me.total,
+          me.email_comprador,
+          me.direccion_comprador,
+          me.telefono_comprador,
+          me.isActaEntrega
+        );
+      }).catch((err) => {
+        console.log(err);
+      });
     },
     guardarXml(
       //InfoTributaria
@@ -1216,7 +1085,8 @@ export default {
       //Datos adicionales del cliente
       emailCli,
       dirCli,
-      telfCli
+      telfCli,
+      isACtaEntrega
     ) {
       let me = this;
       let header = { Token: this.$store.state.token };
@@ -1338,10 +1208,13 @@ export default {
               ruc
             );
             me.actualizarClave(me.IdActualizar,key,num);
-            me.activar(me.IdActualizar);
+
+            //Disminuye el stock del inventario              
+            // if ( !isActaEntrega ) me.activar(me.IdActualizar);             
+            me.activar(me.IdActualizar)
             me.actualizarConteo(me.facturascontadas);
             
-          } else {
+          }else{
             Swal.fire(
               "Error",
               "Ocurrio un error al tratar de guardar la venta."
@@ -1624,7 +1497,7 @@ export default {
       this.dialog = 0;
       this.limpiarbusqueda();
     },
-     activarDesactivarMostrar(accion, item) {
+    activarDesactivarMostrar(accion, item) {
       this.adModal = 1;
       this.adNombre = item.numComprobante;
       this.adId = item._id;
@@ -1673,8 +1546,7 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
-    },
-
+    }
   },
   props: {},
   created() {
@@ -1712,5 +1584,16 @@ export default {
   border-color: #aaaaaa;
   border-width: 1px;
   border-style: solid;
+}
+.centrar-text-stock > div > div > div input {
+  text-align: center;
+  font-size: 16px;
+  /* font-weight: 600; */
+}
+.centrar-text-stock > div > div > div input {
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+  color: rgba(44, 32, 73, 0.87) !important;
 }
 </style>

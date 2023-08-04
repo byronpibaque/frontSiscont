@@ -130,7 +130,6 @@ import axios from "axios";
 export default {
   data() {
     return {
-      
       search: "",
       cliente: [],
       headers: [
@@ -169,7 +168,7 @@ export default {
     }
   },
   created() {
-  this.listar()
+    this.listar()
   },
   methods: {
     eliminar (item) { 
