@@ -625,7 +625,7 @@ export default {
       }
 
        axios
-        .post("http://localhost:5000/api/pdf/pdfE", {        
+        .post("http://localhost:10000/api/pdf/pdfE", {        
           numComprobante: data.numComprobante,
           fecha: this.formatearFecha(data.fechaFactura),         
           clienteDireccion: data.codigoCliente.direccion,

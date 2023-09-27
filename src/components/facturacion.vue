@@ -1139,7 +1139,7 @@ export default {
 
       axios
         .post(
-          "http://localhost:5000/api/xml/xml",
+          "http://localhost:10000/api/xml/xml",
           {
             infoTributaria: {
               razonSocial: razonSocial,
@@ -1365,7 +1365,7 @@ export default {
       let claveAccc = claveAcceso;
 
       axios
-        .post("http://localhost:5000/api/pdf/pdf", {
+        .post("http://localhost:10000/api/pdf/pdf", {
           claveAcceso: claveAcceso,
           numComprobante: numComprobante,
           fecha: fecha,

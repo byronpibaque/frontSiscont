@@ -437,7 +437,7 @@ export default {
       let configuracion = { headers: header };
       axios
         .post(
-          "http://localhost:5000/api/xml/xml_retencion",
+          "http://localhost:10000/api/xml/xml_retencion",
           {
             infoTributaria: {
               razonSocial: razonsocialDistribuidor,
@@ -717,7 +717,7 @@ export default {
       periodoFiscal
     ) {
       axios
-        .post("http://localhost:5000/api/pdf/pdfR", {
+        .post("http://localhost:10000/api/pdf/pdfR", {
           claveAcceso: claveAcceso,
           numComprobante: numComprobante,
           fecha: fecha,
