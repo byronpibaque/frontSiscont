@@ -138,7 +138,7 @@ export default {
         { text: "Opciones", value: "borrar", sortable: false },
         { text: "DESCRIPCION", value: "descripcion", sortable: false },
         { text: "# COMPROBANTE", value: "numComprobante", sortable: false },    
-        { text: "Fecha", value: "createdAt", sortable: false }      
+        { text: "Fecha", value: "createdAt", sortable: true }      
       ],
       compras: [],
       articulos: [],

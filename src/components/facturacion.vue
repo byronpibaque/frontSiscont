@@ -411,7 +411,7 @@ export default {
         { text: "Clave de Acceso", value: "claveAcceso", sortable: false },
         { text: "Usuario", value: "codigoUsuario", sortable: false },
         { text: "Total", value: "total", sortable: false },
-        { text: "Fecha", value: "createdAt", sortable: false },
+        { text: "Fecha", value: "createdAt", sortable: true },
         { text: "Estado", value: "estado", sortable: false },
       ],
       Facturas: [],

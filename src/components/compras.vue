@@ -533,7 +533,7 @@ export default {
       cabeceraCompras: [
         { text: "Opciones", value: "borrar", sortable: false },
         { text: "DESCRIPCION", value: "descripcion", sortable: false },
-        { text: "Proveedor", value: "razonsocial" },
+        { text: "Proveedor", value: "razonsocial",sortable: true },
         { text: "# COMPROBANTE", value: "numComprobante", sortable: false },
         { text: "Clave de acceso", value: "claveAcceso", sortable: false },
         { text: "Sub Total", value: "subTotal", sortable: false },
@@ -541,8 +541,8 @@ export default {
         { text: "Total retenido", value: "totalRetenido", sortable: false },
         { text: "Impuestos", value: "totalimpuesto", sortable: false },
         { text: "Descuentos", value: "totaldescuento", sortable: false },
-        { text: "Fecha de emision", value: "fechaFactura", sortable: false },
-        { text: "Estado", value: "estado", sortable: false },
+        { text: "Fecha de emision", value: "fechaFactura", sortable: true },
+        { text: "Estado", value: "estado", sortable: true },
       ],
       compras: [],
       claveAcceso: "",
@@ -659,6 +659,7 @@ export default {
       });
     },
     async verDetalleC(data) {
+      console.log(data);
       this.claveAcceso = data.claveAcceso;
       this.totalRet = data.totalRetenido;
       this.verNuevo = 1;
@@ -919,7 +920,7 @@ export default {
             });
             Swal.fire("Noticias!", "Se guardo correctamente la compra.", "success");
           } else {
-            Swal.fire("Ops!", "Hubo problemas al intentar guardar la compra", "err");
+            Swal.fire("Ops!", "Hubo problemas al intentar guardar la compra", "error");
           }
           me.limpiar();
           me.ocultarNuevo();
@@ -927,6 +928,7 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+          Swal.fire("Ops!", error.response.data.message, "error");
         });
     },
     async obtenerConteoCTaPC() {

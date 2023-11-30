@@ -171,10 +171,10 @@ export default {
     return {      
       cabeceraCompras: [
         { text: "Opciones", value: "borrar", sortable: false },
-        { text: "PROVEEDOR", value: "proveedor", sortable: false },
+        { text: "PROVEEDOR", value: "proveedor", sortable: true },
         { text: "DESCRIPCION", value: "descripcion", sortable: false },
         { text: "# COMPROBANTE", value: "numComprobante", sortable: false },    
-        { text: "Fecha", value: "createdAt", sortable: false }      
+        { text: "Fecha", value: "createdAt", sortable: true }      
       ],
       compras: [],
       cabeceraArticulos: [
