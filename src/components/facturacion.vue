@@ -11,8 +11,8 @@
           </v-btn>
         </v-flex>
         <v-spacer></v-spacer>
-        <v-text-field class="text-xs-center" v-model="search" append-icon="search"
-          label="Búsqueda" single-line hide-details>
+        <v-text-field class="text-xs-center" v-model="search" append-icon="search" label="Búsqueda" single-line
+          hide-details>
         </v-text-field>
       </v-toolbar>
       <!-- Ventana para crear una factura -->
@@ -43,8 +43,7 @@
             </v-flex>
             <v-flex xs12 sm4 md4 lg4 xl4>
               <v-text-field v-model="razonsocial_comprador" label="Razon Social/Apellidos y Nombres"
-                v-on:keyup.enter="buscarCliente(razonsocial_comprador)"
-              ></v-text-field>
+                v-on:keyup.enter="buscarCliente(razonsocial_comprador)"></v-text-field>
             </v-flex>
             <v-flex xs12 sm4 md4 lg4 xl4>
               <v-text-field v-model="direccion_comprador" label="Dirección Comprador">
@@ -119,8 +118,7 @@
                       <v-text-field v-model="props.item.fechas" style="width: 240px"></v-text-field>
                     </td>
                     <td>
-                      <v-text-field v-model="props.item.fraccionesTotales" 
-                        disabled class="centrar-text-stock">
+                      <v-text-field v-model="props.item.fraccionesTotales" disabled class="centrar-text-stock">
                       </v-text-field>
                     </td>
                     <td>
@@ -172,8 +170,7 @@
           <div id="formapago">
             <v-flex xs12 sm12 md12 lg12 xl12>
               <template>
-                <v-data-table :headers="cabeceraFormapago" :items="detallesFP" hide-actions
-                  class="elevation-1">
+                <v-data-table :headers="cabeceraFormapago" :items="detallesFP" hide-actions class="elevation-1">
                   <template slot="items" slot-scope="props">
                     <td>
                       <v-icon small class="mr-2" @click="eliminarDetalle(detallesFP, props.item)">
@@ -239,6 +236,7 @@
               Guardar y Enviar
             </v-btn>
           </v-flex>
+          <v-divider></v-divider>
           <v-flex xs2 sm2 md2 lg2 xl2>
             <div v-if="modoActualizar">
               <v-btn color="green" v-if="!modoVer" @click.native="actualizarlaFactura()">
@@ -257,8 +255,7 @@
           <v-flex xs2 sm2 md2 lg2 xl2>
             <v-btn color="red" @click.native="(btn_nuevo = 0), limpiar()">
               <v-icon>arrow_back</v-icon>
-              Atras</v-btn
-            >
+              Atras</v-btn>
           </v-flex>
         </v-layout>
       </v-container>
@@ -267,23 +264,23 @@
         <v-data-table :headers="CabeceraFacturas" :items="Facturas" class="elevation-1" :search="search">
           <template v-slot:items="props">
             <td>
-              <v-icon small class="mr-2" v-if="props.item.estado!=1" @click="actualizarFactura(props.item)"
-                >edit</v-icon
-              >
-              <v-icon small class="mr-2" @click="verDetalleFactura(props.item)"
-                >tab</v-icon
-              >
+              <v-icon small class="mr-2" v-if="props.item.estado != 1" @click="actualizarFactura(props.item)">edit</v-icon>
+              <v-icon small class="mr-2" @click="verDetalleFactura(props.item)">tab</v-icon>
+              <v-icon v-if="props.item.estado" small class="mr-2"
+                @click="verificarComprobante(props.item._id, props.item.claveAcceso)">published_with_changes</v-icon>
+              <v-icon v-if="!props.item.estado" small class="mr-2"
+                @click="verificarComprobante2(props.item._id, props.item.claveAcceso)">done_all</v-icon>
               <template v-if="props.item.estado">
                 <v-icon small @click="activarDesactivarMostrar(2, props.item)">
                   block
                 </v-icon>
               </template>
-          
+
             </td>
             <td class="blue--text">
               {{ props.item.numComprobante }}
             </td>
-              <td v-if="props.item.claveAcceso" class="blue--text">
+            <td v-if="props.item.claveAcceso" class="blue--text">
               {{ props.item.claveAcceso }}
             </td>
             <td v-else class="red--text">
@@ -323,8 +320,8 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs12 sm12 md12 lg12 xl12>
-                <v-text-field v-model="texto" @keyup.enter="listarArticulosnombres(texto)"
-                  class="text-xs-center" append-icon="search" label="Búsqueda">
+                <v-text-field v-model="texto" @keyup.enter="listarArticulosnombres(texto)" class="text-xs-center"
+                  append-icon="search" label="Búsqueda">
                 </v-text-field>
                 <template>
                   <v-data-table :headers="cabeceraArticulos" :items="articulos" class="elevation-1">
@@ -353,29 +350,28 @@
       </v-card>
     </v-dialog>
     <!-- Activar desactivar MOdal -->
-       <v-dialog v-model="adModal" max-width="350">
-          <v-card>
-            <v-card-title class="headline" v-if="adAccion==1">Enviar para autorizar factura</v-card-title>
-            <v-card-title class="headline" v-if="adAccion==2">Actualizar Item</v-card-title>
-            <v-card-text>
-              Estás a punto de
-              <span v-if="adAccion==1">Enviar </span>
-              <span v-if="adAccion==2">actualizar</span>
-              la factura {{adNombre}} a autorizar.
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn @click="activarDesactivarCerrar()" color="green darken-1" flat="flat">Cancelar</v-btn>
-              <v-btn v-if="adAccion==1" @click="activar()"
-                color="blue darken-4" flat="flat">
-                Enviar
-              </v-btn>
-              <v-btn v-if="adAccion==2" @click="desactivar()" color="red darken-4" flat="flat">
-                Anular
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+    <v-dialog v-model="adModal" max-width="350">
+      <v-card>
+        <v-card-title class="headline" v-if="adAccion == 1">Enviar para autorizar factura</v-card-title>
+        <v-card-title class="headline" v-if="adAccion == 2">Actualizar Item</v-card-title>
+        <v-card-text>
+          Estás a punto de
+          <span v-if="adAccion == 1">Enviar </span>
+          <span v-if="adAccion == 2">actualizar</span>
+          la factura {{ adNombre }} a autorizar.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="activarDesactivarCerrar()" color="green darken-1" flat="flat">Cancelar</v-btn>
+          <v-btn v-if="adAccion == 1" @click="activar()" color="blue darken-4" flat="flat">
+            Enviar
+          </v-btn>
+          <v-btn v-if="adAccion == 2" @click="desactivar()" color="red darken-4" flat="flat">
+            Anular
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-layout>
 </template>
 
@@ -390,15 +386,15 @@ export default {
     return {
       //Activar/Desactivar
       adModal: 0,
-      adModalD:0,
+      adModalD: 0,
       adAccion: 0,
-       adAccionD: 0,
+      adAccionD: 0,
       adNombre: "",
-      adNombreD:"",
+      adNombreD: "",
       adId: "",
-       adIdD: "",
-       descripcionD:"",
-       id:"",
+      adIdD: "",
+      descripcionD: "",
+      id: "",
       //Actualizar Factura
       IdActualizar: "",
       modoActualizar: 0,
@@ -411,11 +407,11 @@ export default {
         { text: "Clave de Acceso", value: "claveAcceso", sortable: false },
         { text: "Usuario", value: "codigoUsuario", sortable: false },
         { text: "Total", value: "total", sortable: false },
-        { text: "Fecha", value: "createdAt", sortable: true },
+        { text: "Fecha", value: "createdAt", sortable: false },
         { text: "Estado", value: "estado", sortable: false },
       ],
       Facturas: [],
-      facturascontadas:0,
+      facturascontadas: 0,
       //ETC
       search: "",
       btn_nuevo: 0,
@@ -491,7 +487,7 @@ export default {
 
       //XML
       detalleXml: [],
-      detalleXmlFP:[],
+      detalleXmlFP: [],
       datosDistribuidores: [],
       //ARTICULOS
       texto: "",
@@ -501,14 +497,14 @@ export default {
         { text: "Codigo Barras", value: "codigoBarras", sortable: false },
         { text: "Codigo Lote", value: "codigoLote", sortable: false },
         { text: "Nombre Comercial", value: "nombreComercial", sortable: true },
-        {text:"F*Caja",value:"codigoProducto",sortable:false},
-        {text:"Stock",value:"fraccionesTotales",sortable:true}
+        { text: "F*Caja", value: "codigoProducto", sortable: false },
+        { text: "Stock", value: "fraccionesTotales", sortable: true }
       ],
     };
   },
   watch: {},
   computed: {
-    calcularTotal: function() {
+    calcularTotal: function () {
       let resultado =
         parseFloat(this.calcularSubtotal) +
         parseFloat(this.calcularIva) -
@@ -516,7 +512,7 @@ export default {
 
       return resultado.toFixed(2);
     },
-    calcularIva: function() {
+    calcularIva: function () {
       let resultado = 0.0;
       for (let index = 0; index < this.detalles.length; index++) {
         let cant = 0;
@@ -538,7 +534,7 @@ export default {
 
       return resultado.toFixed(2);
     },
-    calcularDescuento: function() {
+    calcularDescuento: function () {
       let resultado = 0.0;
       for (let index = 0; index < this.detalles.length; index++) {
         let cant = 0;
@@ -559,7 +555,7 @@ export default {
       }
       return resultado.toFixed(2);
     },
-    calcularSubtotal: function() {
+    calcularSubtotal: function () {
       let resultado = 0.0;
       for (let index = 0; index < this.detalles.length; index++) {
         let cant = 0;
@@ -581,7 +577,7 @@ export default {
     },
   },
   methods: {
-    actualizarClave(id,clave,num){
+    actualizarClave(id, clave, num) {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
@@ -590,16 +586,16 @@ export default {
       axios
         .put("factura/actualizarC", {
           _id: id,
-          claveAcceso:clave,
-          numero:num
+          claveAcceso: clave,
+          numero: num
         })
-        .then(function(response) {
-          if(response.status==200){          
+        .then(function (response) {
+          if (response.status == 200) {
             me.limpiar();
-            me.btn_nuevo=0
-            me.listarFacturas();          
-          }       
-        }).catch(function(error) {
+            me.btn_nuevo = 0
+            me.listarFacturas();
+          }
+        }).catch(function (error) {
           console.log(error);
         });
     },
@@ -619,26 +615,26 @@ export default {
           totalDescuento: this.totaldescuento,
           codigoCliente: this._idCliente,
         })
-        .then(function(response) {
-          if(response.status==200){
-                Swal.fire(
+        .then(function (response) {
+          if (response.status == 200) {
+            Swal.fire(
               "Noticias!",
               "Se actualizo el borrador de la factura.",
               "success"
             );
-          me.limpiar();
-          me.btn_nuevo=0
-          me.listarFacturas();
-          }else{
-              Swal.fire(
+            me.limpiar();
+            me.btn_nuevo = 0
+            me.listarFacturas();
+          } else {
+            Swal.fire(
               "Noticias!",
               "Hubo algun error al actualizar el borrador de la factura.",
               "error"
             );
           }
-       
+
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -673,6 +669,7 @@ export default {
       this.ptoemision = data.ptoEmision;
       this.isActaEntrega = data.isActaEntrega
       this.listarDetalles(data._id);
+
     },
     listarDetalles(id) {
       let me = this;
@@ -680,11 +677,10 @@ export default {
       let configuracion = { headers: header };
       axios
         .get("factura/query?_id=" + id, configuracion)
-        .then(function(response) {
+        .then(function (response) {
           me.detalles = response.data.detalles;
-
           me.detallesFP = response.data.formaPago;
-        }).catch(function(error) {
+        }).catch(function (error) {
           console.log(error);
         });
     },
@@ -698,15 +694,15 @@ export default {
       axios
         .get(
           "factura/list?codigoDistribuidor=" +
-            codigoDistribuidor +
-            "&codigoUsuario=" +
-            codigoUsuario,
+          codigoDistribuidor +
+          "&codigoUsuario=" +
+          codigoUsuario,
           configuracion
         )
-        .then(function(response) {
+        .then(function (response) {
           if (response.status == 206) Swal.fire("Aviso", response.data.message, "error");
-          else me.Facturas = response.data;          
-        }).catch(function(error) {
+          else me.Facturas = response.data;
+        }).catch(function (error) {
           console.log(error);
         });
     },
@@ -718,13 +714,13 @@ export default {
       let codigoUsuario = this.$store.state.usuario._id;
 
       axios.get(
-          "inventario/busca?data=" + code + "&codigoBodega=" + me.codigoBodega,
-          configuracion
-        )
-        .then(function(response) {
+        "inventario/busca?data=" + code + "&codigoBodega=" + me.codigoBodega,
+        configuracion
+      )
+        .then(function (response) {
           if (response.status == 206) Swal.fire("Aviso", response.data.message, "error");
           else me.articulos = response.data;
-        }).catch(function(error) {
+        }).catch(function (error) {
           console.log(error);
         });
     },
@@ -782,7 +778,7 @@ export default {
             "P. unitario no puede ser un valor negativo."
           );
         }
-        if ( L.descuento.length == 0) {
+        if (L.descuento.length == 0) {
           this.validaMensaje.push("Descuento no puede ser un valor vacio.");
         }
         if (parseInt(L.descuento) < 0) {
@@ -844,7 +840,7 @@ export default {
           },
           configuracion
         )
-        .then(function(response) {
+        .then(function (response) {
           if (response.status == 200) {
             Swal.fire(
               "Noticias!",
@@ -852,7 +848,7 @@ export default {
               "success"
             );
             me.listarFacturas()
-            me.btn_nuevo=0
+            me.btn_nuevo = 0
             me.limpiar()
           } else {
             Swal.fire(
@@ -861,9 +857,9 @@ export default {
               "err"
             );
           }
-         
+
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -880,10 +876,10 @@ export default {
             "bodega/query?codigoDistribuidor=" + codigoDistribuidor,
             configuracion
           )
-          .then(function(response) {
+          .then(function (response) {
             me.codigoBodega = response.data._id;
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.log(error);
           });
       }
@@ -896,28 +892,28 @@ export default {
       let codigoUsuario = this.$store.state.usuario._id;
 
       axios.get(
-          "inventario/buscaCodigo?data=" +
-            code +
-            "&codigoBodega=" +
-            me.codigoBodega,
-          configuracion
-        ).then(function(response) {
-          if (response.status == 206) {
-            Swal.fire("Aviso", response.data.message, "error");
+        "inventario/buscaCodigo?data=" +
+        code +
+        "&codigoBodega=" +
+        me.codigoBodega,
+        configuracion
+      ).then(function (response) {
+        if (response.status == 206) {
+          Swal.fire("Aviso", response.data.message, "error");
+        } else {
+          if (response.data.length > 1) {
+            Swal.fire(
+              "Aviso",
+              "Se estan mostrando mas de un resultado \n deberia buscar en pantalla.",
+              "error"
+            );
           } else {
-            if (response.data.length > 1) {
-              Swal.fire(
-                "Aviso",
-                "Se estan mostrando mas de un resultado \n deberia buscar en pantalla.",
-                "error"
-              );
-            } else {
-              // console.log( response.data );
-              me.AddDeta(response.data);
-            }
+            // console.log( response.data );
+            me.AddDeta(response.data);
           }
-        })
-        .catch(function(error) {
+        }
+      })
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -936,25 +932,25 @@ export default {
       if (this.encuentra(data._id) == true) {
         this.errorArticulo = "El artículo ya ha sido agregado.";
       } else {
-        if(data.fraccionesTotales <= 0){
-          Swal.fire("Fallo!", "No hay stock para "+data.nombreComercial, "error");
-        }else{
-           this.detalles.unshift({
-          _id: data._id,
-          codigoBarra: data.codigoBarra,
-          codigoAuxiliar: data.codigoLote,
-          descripcion: data.codigoProducto.descripcion+" ",
-          nombreComercial: data.nombreComercial,
-          registroSanitario: data.registroSanitario,
-          fechas: `FE: ${ data.fechaElaboracion.split('T')[0] } FC: ${data.fechaCaducidad.split('T')[0]}`,
-          cantidad: 0,
-          precioUni: data.punit,
-          iva: data.iva,
-          descuento: data.descuento,
-          fraccionesTotales: data.fraccionesTotales
-        });
+        if (data.fraccionesTotales <= 0) {
+          Swal.fire("Fallo!", "No hay stock para " + data.nombreComercial, "error");
+        } else {
+          this.detalles.unshift({
+            _id: data._id,
+            codigoBarra: data.codigoBarra,
+            codigoAuxiliar: data.codigoLote,
+            descripcion: data.codigoProducto.descripcion + " ",
+            nombreComercial: data.nombreComercial,
+            registroSanitario: data.registroSanitario,
+            fechas: `FE: ${data.fechaElaboracion.split('T')[0]} FC: ${data.fechaCaducidad.split('T')[0]}`,
+            cantidad: 0,
+            precioUni: data.punit,
+            iva: data.iva,
+            descuento: data.descuento,
+            fraccionesTotales: data.fraccionesTotales
+          });
         }
-        this.texto="";
+        this.texto = "";
         this.codigo = "";
       }
     },
@@ -967,7 +963,7 @@ export default {
 
       axios
         .get("cliente/consulta?data=" + data, configuracion)
-        .then(function(response) {
+        .then(function (response) {
           if (response.data.length == 0) {
             Swal.fire("Aviso", `No hay datos para:${data}`, "error");
             me.tipoIdentificacion = "";
@@ -986,7 +982,7 @@ export default {
             me._idCliente = response.data._id;
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -1002,9 +998,8 @@ export default {
       );
       return response.data;
     },
-    guardar() {  
+    guardar() {
       let me = this;
-      // return console.log( me.facturascontadas );
       this.generardetalle_xml();
       this.generardetallePago_xml()
       const datos = this.datosDistribuidor();
@@ -1019,7 +1014,7 @@ export default {
         porciento = "0";
         tarifa = 0;
       }
-     
+
       datos.then((result) => {
         result.establecimientos.forEach((element) => {
           if (element.tipoEstablecimiento == "MATRIZ") {
@@ -1136,108 +1131,64 @@ export default {
 
         deta.push(det);
       }
-
+      let fecha = me.formatearFecha(moment().format());
       axios
         .post(
-          "http://localhost:10000/api/xml/xml",
+          "factura/emitirFactura",
           {
-            infoTributaria: {
-              razonSocial: razonSocial,
-              nombreComercial: nombreComercial,
-              ruc: ruc,
-              dirMatriz: dirMatriz,
-              estab: estab, //lugar donde se hizo la venta
-              ptoEmi: ptoemision,
-              secuencial: secuencial,
+            "api_key": "API_10425_11398_6578dd450c24a",
+            "codigoDoc": "01",
+            "emisor": {
+              "manejo_interno_secuencia": "NO",
+              "secuencial": secuencial,
+              "fecha_emision": fecha
             },
-            infoFactura: {
-              dirEstablecimiento: dirEstablecimiento,
-              tipoIdentificacionComprador: tipoIdentificacionComprador,
-              razonSocialComprador: razonSocialComprador,
-              identificacionComprador: identificacionComprador,
-              direccionComprador: direccionComprador,
-              totalSinImpuestos: totalSinImpuestos,
-              totalDescuento: totalDescuento,
-              totalConImpuestos: {
-                totalImpuesto: {
-                  codigo: codigo,
-                  codigoPorcentaje: codigoPorcentaje,
-                  baseImponible: baseImponible,
-                  tarifa: tarifa,
-                  valor: valor,
-                },
-              },
-              propina: "0.00",
-              importeTotal: importeTotal,
-              pagos: {
-                pago: this.detalleXmlFP,
-              },
+            "comprador": {
+              "tipo_identificacion": tipoIdentificacionComprador,
+              "identificacion": identificacionComprador,
+              "razon_social": razonSocialComprador,
+              "direccion": direccionComprador,
+              "telefono": null,
+              "celular": telfCli,
+              "correo": emailCli
             },
-            detalles: {
-              detalle: this.detalleXml,
-            },
-            emailCli: emailCli,
-            dirCli: dirCli,
-            telfCli: telfCli,
-          },
-          configuracion
+            "items": this.detalleXml,
+            "pagos": this.detalleXmlFP
+          }
         )
         .then((response) => {
-          if (response.status == 200) {
-            let fecha = me.formatearFecha(moment().format());
-            let key = response.data[0];
-            let num = response.data[1];
-            me.crearPDF_SLocal(
-              key,
-              num,
-              fecha,
-              nombreComercial,
-              dirMatriz,
-              dirEstablecimiento,
-              direccionComprador,
-              identificacionComprador,
-              razonSocialComprador,
-              deta,
-              emailCli,
-              telfCli,
-              totality,
-              descuento,
-              iva,
-              importeTotal,
-              razonSocial,
-              ruc
-            );
-            me.actualizarClave(me.IdActualizar,key,num);
+          if (response.data.creado) {
+            let key = response.data.claveacceso;
+            let num = secuencial;
 
-            //Disminuye el stock del inventario              
-            // if ( !isActaEntrega ) me.activar(me.IdActualizar);             
-            me.activar(me.IdActualizar)
+            me.actualizarClave(me.IdActualizar, key, num);
+            me.verificarComprobante2(me.IdActualizar, key);
             me.actualizarConteo(me.facturascontadas);
-            
-          }else{
+          } else {
             Swal.fire(
               "Error",
-              "Ocurrio un error al tratar de guardar la venta."
+              response.data.errors.error,
+              "error"
             );
           }
         })
         .catch((e) => {
-          console.log(e);
+          Swal.fire(
+            "Error",
+            "Ocurrio un error al tratar de guardar la venta: " + e,
+            "error"
+          );
         });
+
     },
-    generardetallePago_xml(){
+    generardetallePago_xml() {
       let me = this;
       for (let index = 0; index < this.detallesFP.length; index++) {
-        this.detalleXmlFP[index] = [
-          [
-            {
-              formaPago: this.detallesFP[index].formaPago,
-              total: this.detallesFP[index].total,
-              plazo: this.detallesFP[index].plazo,
-              unidadTiempo: this.detallesFP[index].unidadTiempo,
-            },
-          ],
-        ];
+        this.detalleXmlFP[index] =
+        {
+          tipo: this.detallesFP[index].formaPago
+        }
+
       }
     },
     generardetalle_xml() {
@@ -1259,54 +1210,27 @@ export default {
         if (this.detalles[index].iva != 0) {
           codigoPorcent = 2;
           calculoporcentual = (totalsinimpuesto * 0.12).toFixed(2);
-          tarifa = 12;
+          tarifa = 2;
         } else {
           codigoPorcent = 0;
           calculoporcentual = 0;
           tarifa = 0;
         }
 
-        var detAdicional = [
-          {
-            "@nombre": "nombreComercial",
-            "@valor": this.detalles[index].nombreComercial,
-          },
-          { "@nombre": "fechas", "@valor": this.detalles[index].fechas },
-          {
-            "@nombre": "regSanitario",
-            "@valor": this.detalles[index].registroSanitario,
-          },
-        ];
-
-        this.detalleXml[index] = [
-          [
-            {
-              codigoPrincipal: this.detalles[index].codigoBarra,
-              codigoAuxiliar: this.detalles[index].codigoAuxiliar,
-              descripcion: this.detalles[index].descripcion,
-              cantidad: cant,
-              precioUnitario: pu,
-              descuento: descto,
-              precioTotalSinImpuesto: totalsinimpuesto,
-              detallesAdicionales: [
-                {
-                  detAdicional,
-                },
-              ],
-              impuestos: {
-                impuesto: [
-                  {
-                    codigo: "2",
-                    codigoPorcentaje: codigoPorcent,
-                    tarifa: tarifa,
-                    baseImponible: totalsinimpuesto,
-                    valor: calculoporcentual,
-                  },
-                ],
-              },
-            },
-          ],
-        ];
+        this.detalleXml[index] =
+        {
+          codigo_principal: this.detalles[index].codigoBarra,
+          codigo_auxiliar: this.detalles[index].codigoAuxiliar,
+          tipoproducto: 1,
+          tipo_iva: tarifa,
+          descripcion: this.detalles[index].descripcion + " - " + this.detalles[index].nombreComercial + " - " + this.detalles[index].fechas,
+          cantidad: cant,
+          precio_unitario: pu,
+          descuento: descto,
+          tipo_ice: 0,
+          valor_ice: 0,
+          tarifa_ice: 0
+        }
       }
     },
     Agregarformapago() {
@@ -1387,14 +1311,14 @@ export default {
           razonSocial: propietario,
           ruc: rucpropietario,
         })
-        .then(function(response) {})
-        .catch(function(error) {
+        .then(function (response) { })
+        .catch(function (error) {
           console.log(error);
         });
     },
     formatearFecha(value) {
       if (value) {
-        return moment(String(value)).format("MM/DD/YYYY hh:mm");
+        return moment(String(value)).format("YYYY/MM/DD");
       }
     },
     contarFacturasAut() {
@@ -1407,17 +1331,17 @@ export default {
       axios
         .get(
           "data/contar?codigoUsuario=" +
-            codigoUsuario +
-            "&codigoDistribuidor=" +
-            codigoDistribuidor,
+          codigoUsuario +
+          "&codigoDistribuidor=" +
+          codigoDistribuidor,
           configuracion
         )
-        .then(function(response) {
-       
+        .then(function (response) {
+
           me.facturascontadas = response.data;
-          
+
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -1431,19 +1355,19 @@ export default {
       axios
         .get(
           "data/query?codigoUsuario=" +
-            codigoUsuario +
-            "&codigoDistribuidor=" +
-            codigoDistribuidor +
-            "&documento=FACTURA",
+          codigoUsuario +
+          "&codigoDistribuidor=" +
+          codigoDistribuidor +
+          "&documento=FACTURA",
           configuracion
         )
-        .then(function(response) {
+        .then(function (response) {
           // console.log(response.data);
-         // me.numComprobante = response.data.secuencial;
+          // me.numComprobante = response.data.secuencial;
           me.ptoemision = response.data.ptoEmision;
           me.idDatos = response.data._id;
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -1453,9 +1377,9 @@ export default {
         .put("data/actualizarSecuencial", {
           _id: this.idDatos,
           documento: "FACTURA",
-          numero:numero,
+          numero: numero,
         })
-        .then(function(response) {
+        .then(function (response) {
           if (response.status == 200) {
             me.obtenerDatos();
             me.limpiar();
@@ -1468,7 +1392,7 @@ export default {
             );
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -1481,7 +1405,7 @@ export default {
       this.totaldescuento = 0.0;
       this.totalImpuesto = 0.0;
       this.total = 0.0;
-      this.numComprobante=0
+      this.numComprobante = 0
       this.tipoIdentificacion = "";
       this.direccion_comprador = "";
       this.telefono_comprador = "NN";
@@ -1501,7 +1425,7 @@ export default {
       this.adModal = 1;
       this.adNombre = item.numComprobante;
       this.adId = item._id;
-     
+
       if (accion == 1) {
         this.adAccion = 1;
       } else if (accion == 2) {
@@ -1518,15 +1442,15 @@ export default {
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
       axios
-        .put("factura/activate", { _id: id}, configuracion)
-        .then(function(response) {
+        .put("factura/activate", { _id: id }, configuracion)
+        .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
           me.adNombre = "";
           me.adId = "";
-         me.listarFacturas()
+          me.listarFacturas()
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -1535,18 +1459,99 @@ export default {
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
       axios
-        .put("factura/deactivate", { _id: this.adId}, configuracion)
-        .then(function(response) {
+        .put("factura/deactivate", { _id: this.adId }, configuracion)
+        .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
           me.adNombre = "";
           me.adId = "";
-       me.listarFacturas()
+          me.listarFacturas()
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
-    }
+    },
+    verificarComprobante(id, claveAcceso) {
+      axios
+        .post(
+          "factura/verificarComprobante",
+          {
+            "api_key": "API_10425_11398_6578dd450c24a",
+            "claveacceso": claveAcceso
+          }
+        )
+        .then((response) => {
+          const respuesta = response.data;
+          if (respuesta.estado_texto === "Autorizado") {
+            Swal.fire(
+              respuesta.estado_texto,
+              "Comprobante autorizado.",
+              "success"
+            );
+            const link = document.createElement('a');
+            link.href = respuesta.enlace_pdf;
+            link.target = '_blank';
+            link.download = this.pdfFileName;
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+          } else {
+            Swal.fire(
+              respuesta.estado_texto,
+              respuesta.motivo,
+              "info"
+            );
+          }
+        })
+        .catch((e) => {
+          Swal.fire(
+            "Error",
+            "Ocurrio un error al tratar de verificar el comprobante: " + e,
+            "error"
+          );
+        });
+    },
+    verificarComprobante2(id, claveAcceso) {
+      let me = this;
+      axios
+        .post(
+          "factura/verificarComprobante",
+          {
+            "api_key": "API_10425_11398_6578dd450c24a",
+            "claveacceso": claveAcceso
+          }
+        )
+        .then((response) => {
+          const respuesta = response.data;
+          if (respuesta.estado_texto === "Autorizado") {
+            me.activar(id);
+            const link = document.createElement('a');
+            link.href = respuesta.enlace_pdf;
+            link.target = '_blank';
+            link.download = this.pdfFileName;
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+          } else {
+            Swal.fire(
+              respuesta.estado_texto,
+              respuesta.motivo,
+              "info"
+            );
+          }
+        })
+        .catch((e) => {
+          Swal.fire(
+            "Error",
+            "Ocurrio un error al tratar de guardar la venta: " + e,
+            "error"
+          );
+        });
+    },
   },
   props: {},
   created() {
@@ -1576,6 +1581,7 @@ export default {
   border-width: 1px;
   border-style: solid;
 }
+
 #totales {
   width: 400px;
   padding: 1rem;
@@ -1585,12 +1591,14 @@ export default {
   border-width: 1px;
   border-style: solid;
 }
-.centrar-text-stock > div > div > div input {
+
+.centrar-text-stock>div>div>div input {
   text-align: center;
   font-size: 16px;
   /* font-weight: 600; */
 }
-.centrar-text-stock > div > div > div input {
+
+.centrar-text-stock>div>div>div input {
   text-align: center;
   font-size: 17px;
   font-weight: 600;

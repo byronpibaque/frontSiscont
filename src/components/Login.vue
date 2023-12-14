@@ -1,46 +1,6 @@
 <template>
   <div id="principal">
     <v-layout justify-center>
-      <!-- <div id="card">
-        <v-flex xs8 sm8 md6 lg5 xl5>
-          <v-card>
-            <v-toolbar dark color="blue darken-3">
-              <v-toolbar-title> INICIO DE SESIÓN </v-toolbar-title>
-            </v-toolbar>
-            <v-card-text>
-              <v-text-field
-                autofocus
-                color="accent"
-                v-model="email"
-                label="Ingrese su usuario/correo"
-                required
-              >
-              </v-text-field>
-              <v-flex xs6 sm6 md6 lg6 xl6>
-                <v-text-field
-                  type="password"
-                  color="accent"
-                  v-model="password"
-                  label="Ingrese su contraseña"
-                  v-on:keyup.enter="ingresar"
-                  required
-                >
-                </v-text-field>
-              </v-flex>
-
-              <v-flex class="red--text" v-if="errorM">
-                {{ errorM }}
-              </v-flex>
-            </v-card-text>
-            <v-card-actions class="px-3 pb-3">
-              <v-flex text-xs-right>
-                <v-btn @click="ingresar" color="primary">Ingresar</v-btn>
-              </v-flex>
-            </v-card-actions>
-          </v-card>
-        </v-flex>
-      </div> -->
-
       <div id="login">
         <div id="cajas">
           <v-flex>
@@ -55,15 +15,6 @@
             </v-text-field>
           </v-flex>
           <v-flex>
-            <!-- <v-text-field
-              prepend-icon="generating_tokens"
-              autofocus
-              color="accent"
-              v-model="codigoDistribuidor"
-              label="Token de acceso"
-              required
-            >
-            </v-text-field> -->
             <v-select v-model="select" :items="listDistribuidores" item-text="nombreComercial" 
               item-value="codigoDistribuidor" label="Selecciona una Distribuidora" persistent-hint return-object single-line prepend-icon="inventory">
             </v-select>
