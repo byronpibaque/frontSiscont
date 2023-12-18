@@ -881,8 +881,8 @@ export default {
       let fechaI = new Date(this.fechaIngresoBodega+' 05:00:00')
       axios
         .post("compras/add", {
-            claveAcceso: this.claveAcceso,
-            numComprobante: this.numComprobante,
+            claveAcceso: this.claveAcceso.trim(),
+            numComprobante: this.numComprobante.trim(),
             fechaFactura: fecha.toISOString(),
             fechaIngresoBodega: fechaI.toISOString(),
             subTotal: this.subtotal,
