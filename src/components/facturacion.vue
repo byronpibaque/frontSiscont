@@ -138,7 +138,7 @@
                       {{
                         (
                           props.item.cantidad * props.item.precioUni +
-                          props.item.cantidad * props.item.precioUni * 0.12
+                          props.item.cantidad * props.item.precioUni * 0.15
                         ).toFixed(6)
                       }}
                     </td>
@@ -528,7 +528,7 @@ export default {
         pu = parseFloat(element.precioUni);
         val = cant * pu;
         if (element.iva != 0) {
-          resultado = resultado + val * 0.12;
+          resultado = resultado + val * 0.15;
         }
       }
 
@@ -1009,7 +1009,7 @@ export default {
       let tarifa = "";
       if (parseFloat(this.totalImpuesto) != 0) {
         porciento = "2";
-        tarifa = "12";
+        tarifa = "4";
       } else {
         porciento = "0";
         tarifa = 0;
@@ -1106,8 +1106,8 @@ export default {
         totalsinimpuesto = val.toFixed(2);
         if (this.detalles[index].iva != 0) {
           codigoPorcent = 2;
-          calculoporcentual = (totalsinimpuesto * 0.12).toFixed(2);
-          tarifa = 12;
+          calculoporcentual = (totalsinimpuesto * 0.15).toFixed(2);
+          tarifa = 4;
         } else {
           codigoPorcent = 0;
           calculoporcentual = 0;
@@ -1209,8 +1209,8 @@ export default {
         totalsinimpuesto = val.toFixed(2);
         if (this.detalles[index].iva != 0) {
           codigoPorcent = 2;
-          calculoporcentual = (totalsinimpuesto * 0.12).toFixed(2);
-          tarifa = 2;
+          calculoporcentual = (totalsinimpuesto * 0.15).toFixed(2);
+          tarifa = 4;
         } else {
           codigoPorcent = 0;
           calculoporcentual = 0;

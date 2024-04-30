@@ -445,7 +445,7 @@ export default {
 
       }
 
-      resultado = resultado * 0.12
+      resultado = resultado * 0.15
       
       return resultado.toFixed(2);
     },
@@ -621,7 +621,7 @@ export default {
         let desc=parseFloat(element.descuento)
         
         if(element.iva){
-          let imp = parseInt(f)*parseFloat(element.pcompra)*0.12
+          let imp = parseInt(f)*parseFloat(element.pcompra)*0.15
           
           
           let subtotal= (parseFloat(f)*parseFloat(element.pcompra)-desc)+imp
