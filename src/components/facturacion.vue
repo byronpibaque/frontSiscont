@@ -1219,11 +1219,11 @@ export default {
 
         this.detalleXml[index] =
         {
-          codigo_principal: this.detalles[index].codigoBarra,
-          codigo_auxiliar: this.detalles[index].codigoAuxiliar,
+          codigo_principal: this.detalles[index].codigoAuxiliar,
+          codigo_auxiliar: null,
           tipoproducto: 1,
           tipo_iva: tarifa,
-          descripcion: this.detalles[index].descripcion + " - " + this.detalles[index].nombreComercial + " - " + this.detalles[index].fechas,
+          descripcion: this.detalles[index].registroSanitario +" - "+ this.detalles[index].descripcion + " - " + this.detalles[index].nombreComercial + " - " + this.detalles[index].fechas,
           cantidad: cant,
           precio_unitario: pu,
           descuento: descto,
